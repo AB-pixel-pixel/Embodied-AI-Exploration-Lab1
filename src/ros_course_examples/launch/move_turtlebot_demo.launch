@@ -1,0 +1,17 @@
+<launch>
+  <arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [burger, waffle, waffle_pi]"/>
+  <arg name="shape" default="square" doc="shape to move [circle, square, rectangle]"/>
+
+  <!-- Launch Gazebo with empty world -->
+  <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_empty_world.launch">
+    <arg name="model" value="$(arg model)"/>
+  </include>
+
+  <!-- Turtlebot Mover Node -->
+  <node pkg="ros_course_examples" type="move_turtlebot.py" name="move_turtlebot" output="screen">
+    <param name="shape" value="$(arg shape)"/>
+  </node>
+
+  <!-- Rviz -->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find ros_course_examples)/rviz/turtlebot_demo.rviz"/>
+</launch>

@@ -1,0 +1,14 @@
+<launch>
+  <!-- Basic Topic Communication -->
+  <node pkg="ros_course_examples" type="topic_publisher.py" name="talker" output="screen"/>
+  <node pkg="ros_course_examples" type="topic_subscriber.py" name="listener" output="screen"/>
+
+  <!-- Image Communication -->
+  <node pkg="ros_course_examples" type="image_publisher.py" name="image_pub" output="screen"/>
+  
+  <!-- Service Server -->
+  <node pkg="ros_course_examples" type="add_two_ints_server.py" name="add_two_ints_server" output="screen"/>
+
+  <!-- Rviz for Visualization -->
+  <node type="rviz" name="rviz" pkg="rviz" args="-d $(find ros_course_examples)/rviz/basic_comm.rviz" />
+</launch>

@@ -1,0 +1,11 @@
+build/
+devel/
+install/
+log/
+.catkin_workspace
+.vscode/
+*.pyc
+__pycache__/
+src/CMakeLists.txt
+.trae/.ignore
+.trae/.ignore
