@@ -25,6 +25,7 @@
     *   **RViz 窗口**：左下角会显示一个绿色的动态圆环图像，这是通过 ROS 话题传输的 OpenCV 生成图像。
     *   **服务调用**：你可以打开一个新的终端，尝试手动调用加法服务：
         ```bash
+        cd ~/catkin_ws
         source devel/setup.bash
         # 语法: rosrun ros_course_examples add_two_ints_client.py <num1> <num2>
         rosrun ros_course_examples add_two_ints_client.py 10 20
@@ -154,14 +155,14 @@
 
 ### 1. 实验目的
 *   综合运用 ROS 订阅（获取坐标）和发布（控制运动）。
-*   实现简单的追踪算法（P控制）。
+*   实现简单的追踪算法。
 
 ### 2. 实验步骤
 1.  **启动环境**
     ```bash
     rosrun ros_course_examples run_game_v3.sh
     ```
-    *   此时 Robot 1 (Prey) 会开始随机游走。
+    *   此时 Robot 1 (Prey) 会开始随机游走，但远离Chaser。
     *   Robot 2 (Chaser) 原地不动（因为代码没写完）。
 2.  **编写代码**
     打开 `src/ros_course_examples/nodes/student_chaser_template.py`，完成 `chase_logic` 函数。

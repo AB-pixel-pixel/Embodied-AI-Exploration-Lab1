@@ -4,50 +4,32 @@
 set -e
 
 echo "=========================================="
-echo "Starting ROS Course Environment Setup"
+echo "Building ROS Course Workspace"
 echo "=========================================="
 
-# 0. Check for ROS installation
-if ! command -v catkin_make &> /dev/null; then
-    echo "Error: ROS is not installed or not in PATH."
-    echo "Please install ROS Noetic (or your distribution) first."
+# Check for src directory
+if [ ! -d "src" ]; then
+    echo "Error: 'src' directory not found. Please run this script from the workspace root."
     exit 1
 fi
 
-# 1. Initialize Workspace
-echo "[1/4] Initializing workspace..."
+# Initialize Workspace (if needed)
+# This creates the symlink for src/CMakeLists.txt if it doesn't exist
 if [ ! -L src/CMakeLists.txt ] && [ ! -f src/CMakeLists.txt ]; then
-    echo "Creating src/CMakeLists.txt..."
+    echo "Initializing workspace (creating src/CMakeLists.txt)..."
     cd src
     catkin_init_workspace
     cd ..
 fi
 
-# 2. Install dependencies
-echo "[2/4] Installing dependencies..."
-# Check if rosdep is initialized
-if [ ! -f /etc/ros/rosdep/sources.list.d/20-default.list ]; then
-    echo "Initializing rosdep..."
-    sudo rosdep init
-fi
-
-echo "Updating rosdep..."
-rosdep update
-
-echo "Installing dependencies for packages..."
-# Install dependencies for all packages in src
-rosdep install --from-paths src --ignore-src -r -y
-
-# 3. Build the workspace
-echo "[3/4] Building the workspace..."
+# Build the workspace
+echo "Compiling code..."
 catkin_make
 
-# 4. Environment setup
-echo "[4/4] Setup complete!"
 echo "=========================================="
+echo "Build complete!"
 echo "To start using the code, please run:"
 echo ""
 echo "    source devel/setup.bash"
 echo ""
-echo "Tip: You can add this line to your ~/.bashrc to source it automatically."
 echo "=========================================="
