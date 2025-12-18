@@ -1,7 +1,3 @@
-Here is the English translation of your ROS Robot Experiment Manual:
-
----
-
 # ROS Robot Experiment Handbook
 
 This manual aims to guide students through various ROS experiments, including basic communication, robot motion control, multi-robot collaboration, and autonomous tracking. Through this course, students will gain a deep understanding of ROS node communication mechanisms (topics, services), coordinate frame transformations (TF), and the usage of the Gazebo simulation environment.
