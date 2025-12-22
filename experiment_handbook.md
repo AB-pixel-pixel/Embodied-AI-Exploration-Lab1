@@ -1,4 +1,4 @@
-# Linux 快速入门
+# Linux 入门基础
 
 Linux 是一个开源的操作系统，它的内核是由 Linus Torvalds 于 1991 年创建的。
 
@@ -36,7 +36,7 @@ cd ~/
 
 ### Linux 基础指令小实验（跟着一步一步做）
 
-#### ⚠️ 实验安全须知（非常重要）
+####  实验安全须知（非常重要）
 
 在本实验中你将接触到**会真实修改文件和目录的指令**，请务必认真阅读：
 
@@ -46,7 +46,7 @@ cd ~/
 - **严禁在 `/`、`/home`、`/usr` 等系统目录执行 `rm -rf`**
 - **因误操作导致系统损坏，需要自行承担维修或赔偿责任**
 
-👉 **不懂可以随时提问**
+**不懂可以随时提问**
 
 ---
 
@@ -67,9 +67,15 @@ cd ~/
 
 ---
 
-#### 二、实验一：手动操作（必须先做）
+#### 快捷键提示
+**复制粘贴**：
+如果想在终端进行复制使用 ` ctrl + shift + c`，如果想使用粘贴可以使用 `ctrl + shift + v`。如果在终端中按下 ` ctrl + v` 将会有不显示的字符，需要你按两下回退键进行删除。
 
-##### 1️⃣ 查看当前位置
+**关闭程序**：在终端中关闭程序使用`ctrl + c`，强行终止程序使用`ctrl + z`。
+
+#### 二、实验一：手动操作
+
+##### 1 查看当前位置
 
 ```bash
 pwd
@@ -80,7 +86,7 @@ ls
 
 ---
 
-##### 2️⃣ 创建实验工作区
+##### 2 创建实验工作区
 
 ```bash
 mkdir linux_exp
@@ -90,7 +96,7 @@ ls
 
 ---
 
-##### 3️⃣ 创建文件和目录
+##### 3 创建文件和目录
 
 ```bash
 mkdir src
@@ -100,11 +106,12 @@ ls
 
 ---
 
-##### 4️⃣ 使用 gedit 创建 Python 文件
+##### 4 使用 gedit 创建 Python 文件
 
 ```bash
 gedit src/hello.py
 ```
+注意需要`ctrl + s`保存一下
 
 在打开的编辑器中输入并保存：
 
@@ -114,7 +121,7 @@ print("Hello Linux")
 
 ---
 
-##### 5️⃣ 使用 find 查找文件
+##### 5 使用 find 查找文件
 
 ```bash
 find ~ -name "hello.py"
@@ -124,7 +131,7 @@ find ~ -name "hello.py"
 
 ---
 
-##### 6️⃣ 查看文件内容
+##### 6 查看文件内容
 
 ```bash
 cat src/hello.py
@@ -132,7 +139,7 @@ cat src/hello.py
 
 ---
 
-##### 7️⃣ 复制、移动、删除文件（谨慎）
+##### 7 复制、移动、删除文件（谨慎）
 
 ```bash
 cp src/hello.py hello_copy.py
@@ -141,7 +148,7 @@ rm hello_moved.py
 ls
 ```
 
-⚠️ **不要使用 `rm -rf /` 或乱删目录**
+注意 **不要使用 `rm -rf /` 或乱删目录**
 
 ---
 
@@ -156,7 +163,7 @@ pwd
 ##### 方式一：相对路径
 
 ```bash
-python src/hello.py
+python3 src/hello.py
 ```
 
 ---
@@ -164,7 +171,7 @@ python src/hello.py
 ##### 方式二：home 路径
 
 ```bash
-python ~/linux_exp/src/hello.py
+python3 ~/linux_exp/src/hello.py
 ```
 
 ---
@@ -172,7 +179,7 @@ python ~/linux_exp/src/hello.py
 ##### 方式三：绝对路径
 
 ```bash
-python /home/<用户名>/linux_exp/src/hello.py
+python3 /home/<用户名>/linux_exp/src/hello.py
 ```
 
 > 请将 `<用户名>` 替换为当前终端的用户名，即@前面的字符串
@@ -207,10 +214,12 @@ ping baidu.com
 
 #### 五、实验四：一键自动化脚本（重点）
 
+我们可以写一个脚本，自动从互联网上获取今天深圳的天气以及执行上面我们写的Python代码。
+
 ##### 1️⃣ 创建脚本文件
 
 ```bash
-cd ~
+cd ~/linux_exp    
 gedit run_linux_exp.sh
 ```
 
@@ -219,38 +228,25 @@ gedit run_linux_exp.sh
 ```bash
 #!/bin/bash
 
-echo "=== Linux 基础实验脚本开始 ==="
+echo "=== Linux 基础实验脚本：自动执行Python 文件 ==="
+python3 ~/linux_exp/src/hello.py
 
-cd ~
+echo "=== Linux 基础实验脚本：获取当天天气 ==="
+# 定义要查询的城市（可修改为你的城市，如北京、上海、Guangzhou，支持中英文）
+CITY="深圳"
 
-echo "[1] 创建实验目录"
-mkdir -p linux_script_exp/src
+# 输出提示信息
+echo "======================================"
+echo "      今日天气查询（来自 wttr.in）"
+echo "======================================"
 
-echo "[2] 创建 Python 文件"
-cat << EOF > linux_script_exp/src/hello.py
-print("Hello from script")
-EOF
+# 从wttr.in获取天气信息并格式化输出
+curl -s "wttr.in/${CITY}?format=3"  # 极简输出（城市：天气 温度）
+# 脚本结束提示
+echo -e "\n======================================"
+echo "              查询完成"
+echo "======================================"
 
-echo "[3] 查找文件"
-find ~/linux_script_exp -name "hello.py"
-
-echo "[4] 查看文件内容"
-cat linux_script_exp/src/hello.py
-
-echo "[5] 执行 Python（相对路径）"
-cd linux_script_exp
-python src/hello.py
-
-echo "[6] 执行 Python（绝对路径）"
-python ~/linux_script_exp/src/hello.py
-
-echo "[7] 创建、复制、移动、删除文件"
-touch test.txt
-cp test.txt test_copy.txt
-mv test_copy.txt test_moved.txt
-rm test_moved.txt
-
-echo "=== 实验脚本执行完成 ==="
 ```
 
 ---
@@ -269,7 +265,7 @@ chmod +x run_linux_exp.sh
 ./run_linux_exp.sh
 ```
 
-观察每一步的输出，对照脚本内容理解。
+我们可以看到脚本是特别厉害的工具，它通过linux指令就能完成非常多的任务。
 
 ---
 
@@ -299,13 +295,20 @@ chmod +x run_linux_exp.sh
 - [ ] 我能看懂脚本里每一行命令  
 - [ ] 我理解为什么同一个 Python 文件可以用多种方式执行  
 
+
+#### 八、linux指令相关学习资源
+
+- [linux-command-manual](https://www.runoob.com/linux/linux-command-manual.html)
+- [geeksforgeeks - Linux Commands](https://www.geeksforgeeks.org/linux-unix/linux-commands/)
+- [The Linux command line for beginners](https://ubuntu.com/tutorials/command-line-for-beginners#1-overview)
+
 ---
 
 
 
 # ROS 机器人实验手册
 
-本手册旨在指导学生完成 ROS 基础通信、机器人运动控制、多机协同及自主追踪等实验。通过本课程，学生将深入理解 ROS 的节点通信机制（话题、服务）、坐标系转换（TF）以及 Gazebo 仿真环境的使用。
+本手册旨在指导学生完成 ROS 基础通信、机器人运动控制、多机协同及自主追踪等实验。通过本课程，学生将深入体验和理解 ROS 的节点通信机制（话题、服务）、坐标系转换（TF）以及 Gazebo 仿真环境的使用。
 
 ---
 
@@ -455,36 +458,3 @@ chmod +x run_linux_exp.sh
     *   **注意**：在多机系统中，命名空间（Namespace）至关重要，用于区分同类型的不同实体。
 
 ---
-
-## 实验四：编程挑战 - 自动追踪机器人
-
-### 1. 实验目的
-*   综合运用 ROS 订阅（获取坐标）和发布（控制运动）。
-*   实现简单的追踪算法。
-
-### 2. 实验步骤
-1.  **启动环境**
-    ```bash
-    rosrun ros_course_examples run_game_v3.sh
-    ```
-    *   此时 Robot 1 (Prey) 会开始随机游走，但远离Chaser。
-    *   Robot 2 (Chaser) 原地不动（因为代码没写完）。
-2.  **编写代码**
-    打开 `src/ros_course_examples/nodes/student_chaser_template.py`，完成 `chase_logic` 函数。
-3.  **目标**
-    使 Robot 2 自动追上 Robot 1。
-
-### 3. 关键代码提示
-你需要实现以下逻辑：
-1.  **计算目标角度**：使用 `math.atan2(dy, dx)` 计算从我指向猎物的角度。
-2.  **计算角度误差**：`error_yaw = target_angle - current_yaw`。
-    *   **难点**：角度归一化。例如 `3.14` 和 `-3.14` 其实很近，直接相减误差巨大。需要处理成 `-pi` 到 `pi` 之间。
-3.  **控制律**：
-    ```python
-    cmd.angular.z = Kp_turn * error_yaw  # 转向猎物
-    cmd.linear.x = Kp_dist * distance    # 向前冲 (当角度误差较小时再加速)
-    ```
-
-### 4. 常见错误
-*   **坐标系混淆**：`atan2` 返回的是全局坐标系下的角度，需要减去机器人当前的 `yaw` 才是机器人需要转动的角度。
-*   **忘记处理回调**：如果 `self.prey_pose` 还是 `None`（消息还没来），直接计算会报错。务必保留 `if self.prey_pose is None: return` 的判断。
