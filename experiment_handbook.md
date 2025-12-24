@@ -18,8 +18,8 @@ Linux 是一个开源的操作系统，它的内核是由 Linus Torvalds 于 199
 
 在Ubuntu操作系统中，终端是一个非常重要的工具，用户可以在终端中执行各种命令，例如安装软件、配置系统、运行程序等。
 
-你使用ctrl + alt + t 的终端快捷键，会召唤出一个类似于下面的界面：
 
+同时按下ctrl键,alt键和t键，会召唤出一个终端界面：
 ![basic.png](src/ros_course_examples/doc/images/basic.png)
 
 在这个图中，ta是用户名，@分隔符后面的部分是主机名（ShaobinLing），: 是分隔符号，~代表着当前用户的主目录也就是当前终端所在的路径。
@@ -315,12 +315,70 @@ chmod +x run_linux_exp.sh
 ## 实验一：ROS 基础通信体验
 
 ### 1. 实验目的
+*   体验程序（进程）通信的概念
 *   理解 ROS 节点（Node）的概念。
 *   掌握话题（Topic）通信机制：发布者（Publisher）与订阅者（Subscriber）。
 *   掌握服务（Service）通信机制：服务端（Server）与客户端（Client）。
 *   体验图像数据在 ROS 中的传递。
 
 ### 2. 实验步骤
+
+#### 2.1 体验无通信的孤立程序（Python 原生模拟）
+
+首先，我们模拟两个独立的程序：一个是控制器（Controller），负责发出移动指令；另一个是电机（Motor），负责执行移动并报告位置。
+
+1.  **运行 Controller**
+    打开一个新的终端，运行：
+    ```bash
+    cd ~/catkin_ws/src/ros_course_examples/simulation_demo
+    python3 controller.py
+    ```
+    *   **现象**：你会看到它一直在喊：“Controller: I want the robot to move to (1.0, 1.0)...”，并尝试发送指令。
+
+2.  **运行 Motor**
+    打开另一个新的终端，运行：
+    ```bash
+    cd ~/catkin_ws/src/ros_course_examples/simulation_demo
+    python3 motor.py
+    ```
+    *   **现象**：你会看到它一直在说：“Motor: Current position is (0.0, 0.0)”，完全没有移动。
+
+**结论**：
+你可以发现无法传递消息。
+而 ROS 正是机器人模块之间的通信工具。
+做一个比喻，ROS就是机器人身上的神经系统，链接着自己每个部分的算法，也可以链接着别的机器人。
+
+#### 2.2 使用 ROS 实现节点通信
+
+关闭掉以上两个终端（在相应终端上同时按下ctrl键和c键），我们使用 ROS 将这两个程序封装成**节点（Node）**，并利用 ROS 的通信机制让它们“对话”。
+
+1. **启动 ROS Core**
+    在终端A中运行以下命令：
+    ``` bash
+    roscore
+    ```
+
+2.  **启动 ROS 节点**
+    在终端中运行以下命令（我们已经为你准备好了封装后的 ROS 节点和启动脚本）：
+    ```bash
+    cd ~/catkin_ws
+    source devel/setup.bash
+    roslaunch ros_course_examples ros_communication_demo.launch
+    ```
+    .launch文件是ros框架内的脚本，可以一键启动多个ros结点，把整个机器人框架给启动了。
+2.  **观察现象**
+    *   你将看到两个节点同时启动。
+    *   **Controller Node** 会发布速度指令（`linear.x=0.1`, `linear.y=0.1`）。
+    *   **Motor Node** 会接收指令，并实时更新打印自己的坐标：`(0.10, 0.10) -> (0.20, 0.20) -> ...`
+    *   这证明了两个独立的进程通过 ROS 成功进行了数据交换！
+
+#### 2.3 进阶体验：标准 ROS 示例
+
+接下来，我们可以体验一个更完整的 ROS 标准示例（Talker/Listener 和 图像传输）。
+
+
+
+
 1.  **启动实验**
     在终端中运行以下命令：
     ```bash

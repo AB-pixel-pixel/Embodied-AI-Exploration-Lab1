@@ -1,0 +1,7 @@
+<launch>
+    <!-- Launch the motor node -->
+    <node pkg="ros_course_examples" type="motor_node.py" name="motor_node" output="screen"/>
+
+    <!-- Launch the controller node -->
+    <node pkg="ros_course_examples" type="controller_node.py" name="controller_node" output="screen"/>
+</launch>
