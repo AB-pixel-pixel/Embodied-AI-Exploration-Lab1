@@ -1,6 +1,7 @@
 # Embodied AI Exploration Lab 1 (具身智能探索实验1)
 
 本仓库包含具身智能课程的实验代码和相关仿真环境。主要内容包括：
+
 - **ROS 基础示例** (`ros_course_examples`)
 - **Turtlebot3 机器人仿真** (`turtlebot3`, `turtlebot3_simulations`)
 - **相关消息定义** (`turtlebot3_msgs`)
@@ -15,7 +16,8 @@
 
 ```bash
 git clone https://github.com/AB-pixel-pixel/Embodied-AI-Exploration-Lab1.git
-cd Embodied-AI-Exploration-Lab1
+mv Embodied-AI-Exploration-Lab1 catkin_ws
+cd catkin_ws
 ```
 
 ### 2. 编译代码
@@ -31,7 +33,6 @@ chmod +x setup_course.sh
 ```
 
 > **注意**：本脚本仅负责编译。请确保你的环境中已经安装了 ROS Noetic 及相关依赖。
-
 
 ### 3. 开始使用
 
