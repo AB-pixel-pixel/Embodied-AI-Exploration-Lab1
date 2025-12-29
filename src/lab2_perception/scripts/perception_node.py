@@ -3,8 +3,11 @@ import rospy
 import cv2
 import numpy as np
 from sensor_msgs.msg import Image
+from geometry_msgs.msg import Twist, PointStamped
 from cv_bridge import CvBridge
 from lab2_perception.msg import ObjectCoordinates
+import tf2_ros
+import tf2_geometry_msgs
 
 class PerceptionNode:
     def __init__(self):
@@ -13,12 +16,17 @@ class PerceptionNode:
         self.bridge = CvBridge()
         self.latest_depth = None
         
+        # TF Buffer and Listener
+        self.tf_buffer = tf2_ros.Buffer()
+        self.tf_listener = tf2_ros.TransformListener(self.tf_buffer)
+
         # Subscribers
         self.rgb_sub = rospy.Subscriber("/camera/rgb/image_raw", Image, self.rgb_callback)
         self.depth_sub = rospy.Subscriber("/camera/depth/image_raw", Image, self.depth_callback)
         
         # Publisher
         self.coord_pub = rospy.Publisher('detected_object', ObjectCoordinates, queue_size=10)
+        self.cmd_vel_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
         
         rospy.loginfo("Perception Node Started")
 
@@ -88,6 +96,45 @@ class PerceptionNode:
                             msg.y = Y
                             msg.z = Z
                             self.coord_pub.publish(msg)
+
+                            # --- TF Transformation: Camera -> Base Link ---
+                            try:
+                                point_stamped = PointStamped()
+                                point_stamped.header.frame_id = "camera_rgb_optical_frame" # Standard optical frame
+                                point_stamped.header.stamp = rospy.Time(0)
+                                point_stamped.point.x = X
+                                point_stamped.point.y = Y
+                                point_stamped.point.z = Z
+                                
+                                # Transform to base_footprint or base_link
+                                if self.tf_buffer.can_transform("base_footprint", point_stamped.header.frame_id, rospy.Time(0), rospy.Duration(1.0)):
+                                    point_base = self.tf_buffer.transform(point_stamped, "base_footprint")
+                                    # rospy.loginfo(f"Obj in Base: x={point_base.point.x:.2f}, y={point_base.point.y:.2f}, z={point_base.point.z:.2f}")
+                                
+                                # --- 5. Visual Servoing (Follow Red Block) ---
+                                # Control Strategy:
+                                # Angular Z: Turn to center the object (minimize X in camera frame)
+                                # Linear X: Move forward to maintain a distance (e.g., 0.5m)
+                                
+                                cmd = Twist()
+                                k_angular = -1.5 # P controller gain for turning
+                                k_linear = 0.5   # P controller gain for moving
+                                desired_dist = 0.5
+                                
+                                # X is horizontal position in camera frame (Right is positive)
+                                # We want to turn Right (negative angular.z) if X is positive
+                                cmd.angular.z = k_angular * (X / Z) # Normalized error roughly
+                                
+                                if Z > desired_dist:
+                                    cmd.linear.x = k_linear * (Z - desired_dist)
+                                    if cmd.linear.x > 0.2: cmd.linear.x = 0.2 # Limit speed
+                                else:
+                                    cmd.linear.x = 0.0
+                                
+                                self.cmd_vel_pub.publish(cmd)
+
+                            except Exception as e:
+                                rospy.logwarn(f"TF/Control Error: {e}")
                             
                             # Display text
                             text = f"X:{X:.2f} Y:{Y:.2f} Z:{Z:.2f}"
@@ -101,11 +148,12 @@ class PerceptionNode:
         cv2.waitKey(1)
 
     def calculate_3d_coordinates(self, u, v, depth_image):
-        # Camera Intrinsic Parameters
-        fx = 525.0
-        fy = 525.0
-        cx = 319.5
-        cy = 239.5
+        # Camera Intrinsic Parameters (TurtleBot3 Waffle Pi / RealSense R200)
+        # Resolution 640x480, FOV ~60 deg
+        fx = 554.25
+        fy = 554.25
+        cx = 320.5
+        cy = 240.5
 
         Z = depth_image[v, u]  # Depth in meters
         

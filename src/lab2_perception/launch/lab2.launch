@@ -1,0 +1,24 @@
+<launch>
+  <!-- Arguments -->
+  <arg name="model" default="waffle_pi" doc="model type [burger, waffle, waffle_pi]"/>
+  <arg name="open_rviz" default="true"/>
+
+  <!-- Turtlebot3 Gazebo (Empty World with a red block usually, but let's use standard and spawn one if needed) -->
+  <!-- We'll use the standard empty world for now. User can spawn objects manually or we can include a world -->
+  <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_empty_world.launch">
+    <arg name="model" value="$(arg model)"/>
+  </include>
+
+  <!-- Lab2 Perception Node -->
+  <node pkg="lab2_perception" type="perception_node.py" name="perception_node" output="screen"/>
+  
+  <!-- Point Cloud Visualizer Node (Open3D) -->
+  <!-- Note: This opens a GUI window, might not work in headless env, but local is fine -->
+  <!-- <node pkg="lab2_perception" type="pointcloud_visualizer.py" name="pointcloud_visualizer" output="screen"/> -->
+
+  <!-- RViz -->
+  <group if="$(arg open_rviz)"> 
+    <node pkg="rviz" type="rviz" name="rviz" required="true"
+          args="-d $(find lab2_perception)/rviz/lab2.rviz"/>
+  </group>
+</launch>
