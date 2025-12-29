@@ -6,7 +6,11 @@
 - **Turtlebot3 机器人仿真** (`turtlebot3`, `turtlebot3_simulations`)
 - **相关消息定义** (`turtlebot3_msgs`)
 
+---
+
 ## 🚀 快速开始 (Quick Start)
+
+**仅提供给TA配置**
 
 为了让大家能够免去繁琐的环境配置，本项目提供了一键配置脚本。请按照以下步骤进行部署。
 
@@ -43,8 +47,6 @@ source devel/setup.bash
 ```
 
 现在你可以运行相关节点或仿真环境了。
-
----
 
 ### 💡 小贴士
 

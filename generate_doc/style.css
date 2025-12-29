@@ -1,0 +1,21 @@
+body {
+  font-family: "Times New Roman", "SimSun";
+  line-height: 1.4;
+}
+
+img {
+  max-width: 90%;
+  height: auto;
+  page-break-inside: auto;
+  margin: 10pt auto;
+}
+
+pre, code {
+  white-space: pre-wrap;
+  page-break-inside: auto;
+}
+
+h1, h2, h3 {
+  page-break-after: avoid;
+  margin-top: 1.2em;
+}

@@ -1,0 +1,9 @@
+\usepackage{graphicx}
+
+% 让所有图片居中
+\let\oldincludegraphics\includegraphics
+\renewcommand{\includegraphics}[2][]{%
+  \begin{center}%
+  \oldincludegraphics[#1,max width=0.85\textwidth,keepaspectratio]{#2}%
+  \end{center}%
+}
