@@ -14,10 +14,10 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
 )
 
-add_message_files(
-  FILES
+# add_message_files(
+#  FILES
   # Add custom messages here if needed
-)
+#)
 
 add_service_files(
   FILES

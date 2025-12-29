@@ -1,6 +1,7 @@
 # Lab 2: ROS Perception System Basics — Image Subscription and Processing
 
 ## 1. Experiment Objectives
+
 - Learn how to subscribe to and process image data (RGB and Depth) in ROS.
 - Master basic image processing techniques using OpenCV: Color Space Conversion (HSV), Object Detection, and Contour Detection.
 - Understand how to calculate 3D coordinates of objects using Depth maps and Camera Intrinsics.
@@ -9,6 +10,7 @@
 - Visualize 3D Point Clouds using Open3D.
 
 ## 2. Prerequisites
+
 - **Hardware**: TurtleBot3 (or simulation), PC with Ubuntu 20.04.
 - **Software**: ROS Noetic, Python 3.x, OpenCV, Open3D, `cv_bridge`.
 - **Package**: `lab2_perception` (Provided in `src/`).
@@ -43,23 +45,65 @@ This script subscribes to `/camera/rgb/image_raw` and displays the video stream.
 roscore
 
 # Terminal 2: Play a bag file or start a camera simulation (if you have one)
-# For this lab, we usually use the simulation launch file later, but you can test scripts individually if the sim is running.
+source ~/catkin_ws/devel/setup.bash
+export TURTLEBOT3_MODEL=waffle
+roslaunch turtlebot3_gazebo turtlebot3_empty_world.launch
 ```
 
-**Note**: The following scripts require a running camera source. If you haven't started Gazebo yet, jump to **Part 3** to start the simulation first, then come back here.
 
-```bash
-# Terminal 3: Run the RGB listener
-rosrun lab2_perception rgb_subscriber.py
+
+![Turtlebot:waffle in gazebo](image/reading_sensor/1766981728619.png)
+
+**1.2 Run rviz to visualize rgb and depth image** 
+
+
+Open RViz and add image displays for both RGB and depth topics.
+
+``` bash
+# Terminal 3: Run RViz
+rviz
+``` 
+
+In RViz:
+Click Add → By display type → Image
+
+
+![rviz operation](image/reading_sensor/1766981245525.png)
+
+
+
+Use `rostopic list` to check the camera topic name.
+
+![rostopic list result](image/reading_sensor/1766981364117.png)
+
+Set the topic to /camera/rgb/image_raw
+
+![received rgb image from camera](image/reading_sensor/1766981788100.png)
+Add another Image display and set the topic to /camera/depth/image_raw
+Adjust the Fixed Frame (e.g., camera_link or base_link) if needed
+This allows you to visually inspect both the RGB stream and the depth map in real time.
+
+![setup depth image visualize](image/reading_sensor/1766981875507.png)
+
+![received depth image from camera](image/reading_sensor/1766981931475.png)
+
+**1.3 Set obstracle for sensor**
+
+
+Set a green cube for object detection:
+
+``` bash
+source ~/catkin_ws/devel/setup.bash
+rosrun gazebo_ros spawn_model \
+  -file ~/catkin_ws/src/lab2_perception/demo_images/red_cube.sdf \
+  -sdf \
+  -model red_cube
 ```
 
-**1.2 Run Depth Subscriber**
-This script subscribes to `/camera/depth/image_raw` and visualizes the depth map.
+![green cube](image/reading_sensor/1766986405738.png)
 
-```bash
-# Terminal 4: Run the Depth listener
-rosrun lab2_perception depth_subscriber.py
-```
+
+
 
 ---
 
@@ -84,9 +128,10 @@ rosrun lab2_perception hsv_tuner.py
 ```
 
 **Instructions**:
-1.  Use the "Image" trackbar to switch between the generated images.
-2.  Adjust `H Min`, `S Min`, `V Min`, etc., until only the desired object is white in the middle mask window.
-3.  **Record these values**. You will need them for the main perception node. (Default values for red are already set in the code).
+
+1. Use the "Image" trackbar to switch between the generated images.
+2. Adjust `H Min`, `S Min`, `V Min`, etc., until only the desired object is white in the middle mask window.
+3. **Record these values**. You will need them for the main perception node. (Default values for red are already set in the code).
 
 ---
 
@@ -97,6 +142,7 @@ This is the core of the experiment. We will run the TurtleBot3 simulation in Gaz
 **3.1 Launch Simulation and Perception Node**
 
 We have prepared a launch file that starts:
+
 - Gazebo with TurtleBot3.
 - The `perception_node` (performs detection and control).
 - RViz for visualization.
@@ -107,17 +153,18 @@ roslaunch lab2_perception lab2.launch
 ```
 
 **3.2 What to Observe**
-1.  **Gazebo**: You should see the TurtleBot3 in an empty world.
-    - *Action*: Insert a Red Box (or Cylinder) in front of the robot.
-    - Go to the "Insert" tab in Gazebo -> `http://gazebosim.org/models/` -> `Unit Box`.
-    - Right-click the box -> `Edit model` -> Change color to Red (or just assume the default code detects the generated samples if you can spawn a red object). 
-    - *Alternative*: If you cannot spawn a red object easily, the code defaults to looking for "Red". Ensure you have something red in the camera view.
-2.  **OpenCV Windows**:
-    - **Original RGB**: Shows the camera view with the detected object circled and its (X, Y, Z) coordinates displayed.
-    - **HSV Result**: Shows the binary mask of the detected color.
-    - **Canny Edges**: Shows edge detection results.
-3.  **Visual Servoing**:
-    - If a red object is detected, the robot should rotate to face it and move closer until it is 0.5m away.
+
+1. **Gazebo**: You should see the TurtleBot3 in an empty world.
+   - *Action*: Insert a Red Box (or Cylinder) in front of the robot.
+   - Go to the "Insert" tab in Gazebo -> `http://gazebosim.org/models/` -> `Unit Box`.
+   - Right-click the box -> `Edit model` -> Change color to Red (or just assume the default code detects the generated samples if you can spawn a red object).
+   - *Alternative*: If you cannot spawn a red object easily, the code defaults to looking for "Red". Ensure you have something red in the camera view.
+2. **OpenCV Windows**:
+   - **Original RGB**: Shows the camera view with the detected object circled and its (X, Y, Z) coordinates displayed.
+   - **HSV Result**: Shows the binary mask of the detected color.
+   - **Canny Edges**: Shows edge detection results.
+3. **Visual Servoing**:
+   - If a red object is detected, the robot should rotate to face it and move closer until it is 0.5m away.
 
 **3.3 Data Visualization in Terminal**
 To see the custom messages being published:
@@ -151,6 +198,7 @@ rosrun lab2_perception pointcloud_visualizer.py
 ```
 
 **Instructions**:
+
 - A new window "3D Point Cloud" will appear.
 - **Left Click + Drag**: Rotate the view.
 - **Right Click + Drag**: Pan the view.
@@ -163,22 +211,22 @@ rosrun lab2_perception pointcloud_visualizer.py
 
 The `perception_node` automatically broadcasts the position of the detected object in the robot's coordinate system.
 
-1.  **RViz**:
-    - The launch file opens RViz.
-    - Ensure "TF" is checked in the display list.
-    - You can visualize the relationship between `camera_rgb_optical_frame` (where the camera sees) and `base_footprint` (the robot's center on the ground).
-    - The code calculates the object's position in `base_footprint` and logs it (check the node output).
+1. **RViz**:
+   - The launch file opens RViz.
+   - Ensure "TF" is checked in the display list.
+   - You can visualize the relationship between `camera_rgb_optical_frame` (where the camera sees) and `base_footprint` (the robot's center on the ground).
+   - The code calculates the object's position in `base_footprint` and logs it (check the node output).
 
 ## 5. Summary of Key Commands
 
-| Task | Command |
-|------|---------|
-| **Build** | `catkin_make -DCATKIN_WHITELIST_PACKAGES="lab2_perception"` |
-| **Generate Images** | `rosrun lab2_perception generate_images.py` |
-| **HSV Tuner** | `rosrun lab2_perception hsv_tuner.py` |
-| **Launch Lab** | `roslaunch lab2_perception lab2.launch` |
-| **3D Visualizer** | `rosrun lab2_perception pointcloud_visualizer.py` |
-| **Check Topics** | `rostopic echo /detected_object` |
+| Task                      | Command                                                       |
+| ------------------------- | ------------------------------------------------------------- |
+| **Build**           | `catkin_make -DCATKIN_WHITELIST_PACKAGES="lab2_perception"` |
+| **Generate Images** | `rosrun lab2_perception generate_images.py`                 |
+| **HSV Tuner**       | `rosrun lab2_perception hsv_tuner.py`                       |
+| **Launch Lab**      | `roslaunch lab2_perception lab2.launch`                     |
+| **3D Visualizer**   | `rosrun lab2_perception pointcloud_visualizer.py`           |
+| **Check Topics**    | `rostopic echo /detected_object`                            |
 
 ## 6. Troubleshooting
 

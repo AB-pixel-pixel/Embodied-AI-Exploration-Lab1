@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<sdf version="1.6">
+  <model name="red_cube">
+    <pose>3 0 1 0 0 0</pose> <!-- 方块的位置 -->
+    <link name="link">
+      <visual name="visual">
+        <geometry>
+          <box><size>1 1 1</size></box> <!-- 方块尺寸 -->
+        </geometry>
+        <material>
+          <ambient>1 0 0 1</ambient> <!-- 红色 -->
+          <diffuse>1 0 0 1</diffuse>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>
