@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>handbook_lab2.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="lab-2-ros-perception-system-basics--image-subscription-and-processing">Lab 2: ROS Perception System Basics — Image Subscription and Processing</h1>
+<h2 id="1-experiment-objectives">1. Experiment Objectives</h2>
+<ul>
+<li>Learn how to subscribe to and process image data (RGB and Depth) in ROS.</li>
+<li>Master basic image processing techniques using OpenCV: Color Space Conversion (HSV), Object Detection, and Contour Detection.</li>
+<li>Understand how to calculate 3D coordinates of objects using Depth maps and Camera Intrinsics.</li>
+<li>Learn to transform coordinates from the Camera Frame to the Robot Base Frame using TF.</li>
+<li>Implement a basic Visual Servoing control loop to follow a target.</li>
+<li>Visualize 3D Point Clouds using Open3D.</li>
+</ul>
+<h2 id="2-setup-and-compilation">2. Setup and Compilation</h2>
+<p>First, ensure your environment is set up and the package is compiled.</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># 1. Navigate to your workspace</span>
+<span class="hljs-built_in">cd</span> ~/catkin_ws
+
+<span class="hljs-comment"># 2. Build the package</span>
+<span class="hljs-comment"># We whitelist only this package to speed up compilation</span>
+catkin_make -DCATKIN_WHITELIST_PACKAGES=<span class="hljs-string">"lab2_perception"</span>
+
+<span class="hljs-comment"># 3. Source the setup script to register the new package</span>
+<span class="hljs-built_in">source</span> devel/setup.bash
+
+<span class="hljs-comment"># 4. Grant execution permissions</span>
+chmod +x ~/catkin_ws/src/lab2_perception/tools/*.py
+chmod +x ~/catkin_ws/src/lab2_perception/scripts/*.py
+</div></code></pre>
+<h2 id="3-step-by-step-experiment">3. Step-by-Step Experiment</h2>
+<h3 id="part-1-start-simulation">Part 1: Start simulation</h3>
+<p>Before diving into complex processing, let's verify we can receive images from the camera.</p>
+<p><strong>1.1 Run Simulation</strong></p>
+<pre class="hljs"><code><div><span class="hljs-comment"># Terminal 1: Start ROS Master (if not running)</span>
+roscore
+</div></code></pre>
+<pre class="hljs"><code><div><span class="hljs-comment"># Terminal 2: Start a robot simulation</span>
+<span class="hljs-built_in">source</span> ~/catkin_ws/devel/setup.bash
+<span class="hljs-built_in">export</span> TURTLEBOT3_MODEL=waffle
+roslaunch turtlebot3_gazebo turtlebot3_empty_world.launch
+</div></code></pre>
+<p><img src="image/reading_sensor/1766981728619.png" alt="Turtlebot:waffle in gazebo"></p>
+<p><strong>1.2 Run rviz to visualize rgb and depth image</strong></p>
+<p>Open RViz and add image displays for both RGB and depth topics.</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># Terminal 3: Run RViz</span>
+rviz
+</div></code></pre>
+<p>In RViz:
+Click Add → By display type → Image</p>
+<p><img src="image/reading_sensor/1766981245525.png" alt="rviz operation"></p>
+<p>Use <code>rostopic list</code> to check the camera topic name.</p>
+<p><img src="image/reading_sensor/1766981364117.png" alt="rostopic list result"></p>
+<p>Set the topic to /camera/rgb/image_raw</p>
+<p><img src="image/reading_sensor/1766981788100.png" alt="received rgb image from camera">
+Add another Image display and set the topic to /camera/depth/image_raw
+Adjust the Fixed Frame (e.g., camera_link or base_link) if needed
+This allows you to visually inspect both the RGB stream and the depth map in real time.</p>
+<p><img src="image/reading_sensor/1766981875507.png" alt="setup depth image visualize"></p>
+<p><img src="image/reading_sensor/1766981931475.png" alt="received depth image from camera"></p>
+<p><strong>1.3 Spawn an obstacle/object for detection</strong></p>
+<p>Set a green cube for object detection:</p>
+<pre class="hljs"><code><div><span class="hljs-built_in">source</span> ~/catkin_ws/devel/setup.bash
+rosrun gazebo_ros spawn_model \
+  -file ~/catkin_ws/src/lab2_perception/demo_images/green_cube.sdf \
+  -sdf \
+  -model green_cube
+</div></code></pre>
+<p><img src="image/reading_sensor/1766986405738.png" alt="green cube"></p>
+<hr>
+<h3 id="part-2-image-processing-tools-hsv-tuning">Part 2: Image Processing Tools (HSV Tuning)</h3>
+<p>To detect a specific object (like a green block), we need to find the correct HSV (Hue, Saturation, Value) thresholds. We have provided tools to help you with this.</p>
+<p><strong>2.1 Generate Test Images</strong>
+First, let's generate some sample images to test our algorithm.</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># Generate dummy images in src/lab2_perception/demo_images/</span>
+rosrun lab2_perception generate_images.py
+</div></code></pre>
+<p><strong>2.2 Tune HSV Thresholds</strong>
+Use the tuner tool to find the best values to isolate the green color.</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># Run the tuner tool</span>
+rosrun lab2_perception hsv_tuner.py
+</div></code></pre>
+<p><strong>Instructions</strong>:</p>
+<ul>
+<li>Adjust <code>H Min</code>, <code>S Min</code>, <code>V Min</code>, etc., until only the desired object is white in the middle mask window.</li>
+<li><code>Esc</code> will exit the program.</li>
+<li><strong>Record these values</strong>. You will need them for the main perception node. (Default values for green are already set in the code)</li>
+</ul>
+<p><img src="image/reading_sensor/1767070575104.png" alt="Detect the green color object"></p>
+<p><strong>2.3 Get camera param</strong></p>
+<pre class="hljs"><code><div>rostopic <span class="hljs-built_in">echo</span> /camera/rgb/camera_info
+</div></code></pre>
+<p><img src="image/reading_sensor/1767273147214.png" alt="1767273147214"></p>
+<p>This parameter is critical for calculating the correct object coordinates.</p>
+<p>This parameter will be loaded autonomously in the perception node.</p>
+<hr>
+<h3 id="part-3-integrated-perception--visual-servoing">Part 3: Integrated Perception &amp; Visual Servoing</h3>
+<p>This is the core of the experiment. We will run the TurtleBot3 simulation in Gazebo. The robot will use its camera to detect a green object, calculate its 3D position, and drive towards it.</p>
+<p><strong>3.1 Launch Simulation and Perception Node</strong></p>
+<p>We have prepared a launch file that starts:</p>
+<ul>
+<li>Gazebo with TurtleBot3.</li>
+<li>The <code>perception_node</code> (performs detection and control).</li>
+<li>RViz for visualization.</li>
+</ul>
+<pre class="hljs"><code><div><span class="hljs-comment"># Close previous terminals if needed, then run:</span>
+<span class="hljs-comment"># Terminal 1 start simulation</span>
+<span class="hljs-built_in">source</span> ~/catkin_ws/devel/setup.bash
+<span class="hljs-built_in">export</span> TURTLEBOT3_MODEL=waffle
+roslaunch turtlebot3_gazebo turtlebot3_empty_world.launch
+</div></code></pre>
+<pre class="hljs"><code><div><span class="hljs-comment"># Terminal 2 start perception node</span>
+<span class="hljs-built_in">source</span> ~/catkin_ws/devel/setup.bash
+roslaunch lab2_perception lab2.launch
+</div></code></pre>
+<p><img src="image/reading_sensor/1767267346716.png" alt="Gazebo ">
+<img src="image/reading_sensor/1767267389541.png" alt="Display point cloud from the robot in rviz"></p>
+<p>To stop the robot immediately, press Ctrl+C in the terminal running the perception node, or lift the robot (if real) / reset simulation (if Gazebo).</p>
+<p>Use the HSV values (H_min, S_min, V_min, etc.) you recorded in Part 2 to update the parameters in the rqt_reconfigure window.</p>
+<pre class="hljs"><code><div>rosrun rqt_reconfigure rqt_reconfigure
+</div></code></pre>
+<p>Set the threshold like this:</p>
+<p><img src="image/reading_sensor/1767267517658.png" alt="Thresholds shown above"></p>
+<p><img src="image/reading_sensor/1767267546716.png" alt="Red line bounding the target object"></p>
+<p><strong>3.2 Data Visualization in Terminal</strong></p>
+<p>To see the custom messages being published:</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># Terminal 3 </span>
+<span class="hljs-built_in">source</span> ~/catkin_ws/devel/setup.bash
+
+<span class="hljs-comment"># Check the detected object coordinates</span>
+rostopic <span class="hljs-built_in">echo</span> /detected_object
+</div></code></pre>
+<p><img src="image/reading_sensor/1767267661291.png" alt="The pose of our target object"></p>
+<p>Move the cube, and you will observe the robot moving towards it.</p>
+<p><img src="image/reading_sensor/1767271748881.png" alt="1767271748881"></p>
+<p><img src="image/reading_sensor/1767271759084.png" alt="1767271759084"></p>
+<p><img src="image/reading_sensor/1767271789930.png" alt="1767271789930"></p>
+<p><img src="image/reading_sensor/1767271815603.png" alt="1767271815603"></p>
+<pre class="hljs"><code><div><span class="hljs-comment"># Check the velocity commands being sent to the robot</span>
+rostopic <span class="hljs-built_in">echo</span> /cmd_vel
+</div></code></pre>
+<p><img src="image/reading_sensor/1767268110308.png" alt="1767268110308"></p>
+<hr>
+<h3 id="part-4-3d-point-cloud-visualization">Part 4: 3D Point Cloud Visualization</h3>
+<p>While RViz is great for ROS integration, Open3D provides powerful Python APIs for programmatic point cloud processing and visualization.</p>
+<p><strong>4.1 Run the Visualizer</strong>
+While the simulation (from Part 3) is running:</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># Open a new terminal</span>
+<span class="hljs-built_in">source</span> ~/catkin_ws/devel/setup.bash
+
+<span class="hljs-comment"># Run the Open3D visualizer</span>
+rosrun lab2_perception pointcloud_visualizer.py
+</div></code></pre>
+<ul>
+<li>A new window &quot;3D Point Cloud&quot; will appear.</li>
+<li><strong>Left Click + Drag</strong>: Rotate the view.</li>
+<li><strong>Scroll Wheel</strong>: Zoom in/out.</li>
+<li>You should see the 3D reconstruction of the scene in front of the robot.</li>
+</ul>
+<p><img src="image/reading_sensor/1767269368111.png" alt="1767269368111"></p>
+<p><img src="image/reading_sensor/1767269386021.png" alt="1767269386021"></p>
+<h2 id="conclusion">Conclusion:</h2>
+<p>In this experiment, we successfully implemented a complete ROS perception pipeline for a mobile robot.</p>
+<p>Data Acquisition: We learned how to subscribe to and visualize RGB and Depth data streams from the TurtleBot3 camera using RViz.</p>
+<p>Image Processing: By utilizing the HSV color space and OpenCV tools, we effectively isolated specific objects (green cube) from the background and tuned thresholds for robust detection.</p>
+<p>3D Localization &amp; Control: We bridged the gap between 2D image pixels and 3D world coordinates using camera intrinsics and depth maps. Through TF transformations, we converted these coordinates into the robot's base frame to implement a closed-loop visual servoing controller, allowing the robot to autonomously track the target.</p>
+<p>Visualization: Finally, we explored 3D scene reconstruction using Open3D, verifying the depth data fidelity.</p>
+<p>This lab demonstrates the fundamental workflow of robot perception: Sense (Camera) → Perceive (OpenCV/HSV) → Plan/Act (Visual Servoing). These skills form the foundation for more advanced tasks such as SLAM, object manipulation, and semantic scene understanding.</p>
+
+</body>
+</html>
