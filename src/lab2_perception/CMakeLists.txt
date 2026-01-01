@@ -16,6 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   tf2_ros
   tf2_geometry_msgs
+  dynamic_reconfigure
 )
 
 ## System dependencies are found with CMake's conventions
@@ -52,6 +53,8 @@ find_package(catkin REQUIRED COMPONENTS
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
+
+
 add_message_files(
   FILES
   ObjectCoordinates.msg
@@ -92,11 +95,9 @@ generate_messages(
 ##     and list every .cfg file to be processed
 
 ## Generate dynamic reconfigure parameters in the 'cfg' folder
-# generate_dynamic_reconfigure_options(
-#   cfg/DynReconf1.cfg
-#   cfg/DynReconf2.cfg
-# )
-
+generate_dynamic_reconfigure_options(
+  cfg/perception_node.cfg
+)
 ###################################
 ## catkin specific configuration ##
 ###################################
@@ -109,7 +110,7 @@ generate_messages(
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES lab2_perception
-  CATKIN_DEPENDS cv_bridge message_runtime rospy sensor_msgs std_msgs
+  CATKIN_DEPENDS cv_bridge message_runtime rospy sensor_msgs std_msgs dynamic_reconfigure 
 #  DEPENDS system_lib
 )
 

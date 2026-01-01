@@ -2,81 +2,107 @@
 import cv2
 import numpy as np
 import os
-import glob
 
 def nothing(x):
     pass
 
 def main():
-    # Load images
     img_dir = os.path.join(os.path.dirname(__file__), '../demo_images')
-    image_files = glob.glob(os.path.join(img_dir, '*.png'))
-    
-    if not image_files:
-        print("No images found. Run generate_images.py first.")
-        return
+    image_files = [
+        'green_circle_noisy.png',
+        'green_square.png',
+        'multi_color.png'
+    ]
+    image_files = [os.path.join(img_dir, f) for f in image_files]
 
-    current_img_idx = 0
-    
     cv2.namedWindow('HSV Tuner')
-    
-    # Create Trackbars
-    cv2.createTrackbar('H Min', 'HSV Tuner', 0, 179, nothing)
-    cv2.createTrackbar('S Min', 'HSV Tuner', 120, 255, nothing)
-    cv2.createTrackbar('V Min', 'HSV Tuner', 70, 255, nothing)
-    cv2.createTrackbar('H Max', 'HSV Tuner', 10, 179, nothing)
+
+    # HSV 滑条
+    cv2.createTrackbar('H Min', 'HSV Tuner', 35, 179, nothing)
+    cv2.createTrackbar('H Max', 'HSV Tuner', 85, 179, nothing)
+
+    cv2.createTrackbar('S Min', 'HSV Tuner', 80, 255, nothing)
     cv2.createTrackbar('S Max', 'HSV Tuner', 255, 255, nothing)
+
+    cv2.createTrackbar('V Min', 'HSV Tuner', 80, 255, nothing)
     cv2.createTrackbar('V Max', 'HSV Tuner', 255, 255, nothing)
-    
-    cv2.createTrackbar('Image', 'HSV Tuner', 0, len(image_files)-1, nothing)
+
+    cv2.createTrackbar('Min Area', 'HSV Tuner', 300, 50000, nothing)
 
     while True:
-        # Get Trackbar positions
+        # 读取参数
         h_min = cv2.getTrackbarPos('H Min', 'HSV Tuner')
         s_min = cv2.getTrackbarPos('S Min', 'HSV Tuner')
         v_min = cv2.getTrackbarPos('V Min', 'HSV Tuner')
         h_max = cv2.getTrackbarPos('H Max', 'HSV Tuner')
         s_max = cv2.getTrackbarPos('S Max', 'HSV Tuner')
         v_max = cv2.getTrackbarPos('V Max', 'HSV Tuner')
-        img_idx = cv2.getTrackbarPos('Image', 'HSV Tuner')
-        
-        # Load current image
-        img = cv2.imread(image_files[img_idx])
-        if img is None: continue
-        
-        # Resize for better display if needed
-        img = cv2.resize(img, (400, 300))
-        
-        # Convert to HSV
-        hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-        
-        # Create Mask
-        lower = np.array([h_min, s_min, v_min])
-        upper = np.array([h_max, s_max, v_max])
-        mask = cv2.inRange(hsv, lower, upper)
-        
-        # Feature Extraction (Contours)
-        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        
-        # Result Image
-        result = img.copy()
-        cv2.drawContours(result, contours, -1, (0, 255, 0), 2)
-        
-        # Create Visualization Stack
-        # 1. Original
-        # 2. Mask (Gray) -> Convert to BGR for stacking
-        mask_bgr = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
-        # 3. Result
-        
-        # Stack horizontally
-        stacked = np.hstack((img, mask_bgr, result))
-        
-        cv2.imshow('HSV Tuner', stacked)
-        
-        key = cv2.waitKey(1) & 0xFF
-        if key == 27: # ESC
+        min_area = cv2.getTrackbarPos('Min Area', 'HSV Tuner')
+
+        results = []
+
+        for img_path in image_files:
+            img = cv2.imread(img_path)
+            if img is None:
+                continue
+
+            # === 1️⃣ 图片压缩到 1/2 ===
+            img = cv2.resize(img, None, fx=0.3, fy=0.3)
+
+            hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+
+            lower = np.array([h_min, s_min, v_min])
+            upper = np.array([h_max, s_max, v_max])
+            mask = cv2.inRange(hsv, lower, upper)
+
+            contours, _ = cv2.findContours(
+                mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
+            )
+
+            result = img.copy()
+
+            # === 2️⃣ 变色目标框 ===
+            for i, cnt in enumerate(contours):
+                if cv2.contourArea(cnt) > min_area:
+                    x, y, w, h = cv2.boundingRect(cnt)
+
+                    # 根据目标编号生成颜色
+                    color = cv2.cvtColor(
+                        np.uint8([[[i * 40 % 180, 255, 255]]]),
+                        cv2.COLOR_HSV2BGR
+                    )[0][0].tolist()
+
+                    cv2.rectangle(
+                        result,
+                        (x, y),
+                        (x + w, y + h),
+                        color,
+                        2
+                    )
+
+            # 图片名
+            name = os.path.basename(img_path)
+            cv2.putText(
+                result,
+                name,
+                (10, 20),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.6,
+                (0, 0, 255),
+                2
+            )
+
+            mask_bgr = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
+            triple = np.hstack((img, mask_bgr, result))
+            results.append(triple)
+
+        if results:
+            stacked_all = np.vstack(results)
+            cv2.imshow('HSV Tuner', stacked_all)
+
+        if cv2.waitKey(1) & 0xFF == 27:
             break
-            
+
     cv2.destroyAllWindows()
 
 if __name__ == '__main__':
