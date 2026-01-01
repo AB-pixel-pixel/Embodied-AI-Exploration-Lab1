@@ -62,7 +62,7 @@ Open RViz and add image displays for both RGB and depth topics.
 ``` bash
 # Terminal 3: Run RViz
 rviz
-``` 
+```
 
 In RViz:
 Click Add → By display type → Image
@@ -100,9 +100,9 @@ rosrun gazebo_ros spawn_model \
   -model red_cube
 ```
 
-![green cube](image/reading_sensor/1766986405738.png)
 
 
+![](reading_sensor.assets/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202025-12-30%20171652.png)
 
 
 ---
