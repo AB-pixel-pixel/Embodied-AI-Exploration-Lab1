@@ -661,11 +661,16 @@ roslaunch turtlebot3_gazebo turtlebot3_empty_world.launch
 ### 3.2 Build Custom Scene
 
 1. **Insert Models** : Drag objects from the left panel into the scene.
+
+   ![image-20260107212721055](handbook_lab1.assets/image-20260107212721055.png)
+
 2. **Adjust Parameters** :
 
 * Position (x, y, z): Position coordinates
+
 * Orientation (roll, pitch, yaw): Attitude angles
-* Scale: Zoom size
+
+  ![image-20260107212332406](handbook_lab1.assets/image-20260107212332406.png)
 
 1. **Save World** : `File -> Save World As -> my_world.world`
 

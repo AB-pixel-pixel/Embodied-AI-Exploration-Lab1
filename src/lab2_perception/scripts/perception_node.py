@@ -11,6 +11,10 @@ import tf2_geometry_msgs
 from lab2_perception.cfg import PerceptionHSVConfig
 from dynamic_reconfigure.server import Server
 
+
+from visualization_msgs.msg import Marker
+
+
 from sensor_msgs.msg import Image, CameraInfo # 添加 CameraInfo
 
 from enum import Enum
@@ -80,7 +84,12 @@ class PerceptionNode:
         # 添加 CameraInfo 订阅者
         self.info_sub = rospy.Subscriber("/camera/rgb/camera_info", CameraInfo, self.camera_info_callback)
 
+        # 发布 odom 下的点（可选：用于调试查看）
+        self.point_odom_pub = rospy.Publisher('/detected_point_odom', PointStamped, queue_size=10)
 
+
+        # marker id 计数（避免覆盖/冲突；你也可以固定为0让它一直更新同一个点）
+        self.marker_id = 0
         
         rospy.loginfo("Perception Node Started")
 
@@ -190,6 +199,10 @@ class PerceptionNode:
                         h, w = self.latest_depth.shape
                         if 0 <= cX < w and 0 <= cY < h:
                             X, Y, Z = self.calculate_3d_coordinates(cX, cY, self.latest_depth)
+
+                            # 转到 odom 并发布 RViz Marker
+                            self.publish_point_in_odom(X, Y, Z)
+
                             
                             # --- Publish Coordinates ---
                             msg = ObjectCoordinates()
@@ -359,6 +372,42 @@ class PerceptionNode:
             Y = (v - self.cy) * Z / self.fy
 
             return float(X), float(Y), float(Z)
+
+
+    def publish_point_in_odom(self, X, Y, Z):
+        """
+        把相机光学坐标系下的点 (X,Y,Z) 转到 odom，并发布 Marker 给 RViz 可视化
+        Transform a point from camera_rgb_optical_frame to odom and publish RViz Marker
+        """
+        # 1) 组装 PointStamped（源坐标系：camera_rgb_optical_frame）
+        point_cam = PointStamped()
+        point_cam.header.frame_id = "camera_rgb_optical_frame"
+        point_cam.header.stamp = rospy.Time(0)  # 用最新 TF；也可用 rospy.Time.now()
+        point_cam.point.x = float(X)
+        point_cam.point.y = float(Y)
+        point_cam.point.z = float(Z)
+
+        # 2) TF2 变换到 odom
+        try:
+            if not self.tf_buffer.can_transform(
+                "odom",
+                point_cam.header.frame_id,
+                rospy.Time(0),
+                rospy.Duration(0.2)
+            ):
+                rospy.logwarn_throttle(1.0, "TF not available: camera_rgb_optical_frame -> odom")
+                return
+
+            point_odom = self.tf_buffer.transform(point_cam, "odom", rospy.Duration(0.2))
+
+        except Exception as e:
+            rospy.logwarn_throttle(1.0, f"TF transform error to odom: {e}")
+            return
+
+        # 3) 发布 odom 下的点（可选，用于 rostopic echo/rviz PointStamped）
+        self.point_odom_pub.publish(point_odom)
+
+
 
     def run(self):
         rospy.spin()
