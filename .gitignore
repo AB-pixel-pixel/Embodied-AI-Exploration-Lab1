@@ -10,3 +10,4 @@ src/CMakeLists.txt
 .trae/.ignore
 .trae/.ignore
 *.Identifier
+/backup
