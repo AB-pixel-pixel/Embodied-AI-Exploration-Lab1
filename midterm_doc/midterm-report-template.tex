@@ -1,0 +1,332 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ROS Project Report Template
+% Designed for 2-3 pages (excluding code appendix)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[11pt, a4paper]{article}
+
+%% ==================== Packages ====================
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{amsmath, amssymb}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{caption}	
+\usepackage{subcaption}
+\usepackage{float}
+
+%% ==================== Page Style ====================
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small ROS Project Report}
+\fancyhead[R]{\small \thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+%% ==================== Code Listing Style ====================
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.95}
+
+\lstdefinestyle{mystyle}{
+	backgroundcolor=\color{backcolour},   
+	commentstyle=\color{codegreen},
+	keywordstyle=\color{blue},
+	numberstyle=\tiny\color{codegray},
+	stringstyle=\color{codepurple},
+	basicstyle=\ttfamily\footnotesize,
+	breakatwhitespace=false,         
+	breaklines=true,                 
+	captionpos=b,                    
+	keepspaces=true,                 
+	numbers=left,                    
+	numbersep=5pt,                  
+	showspaces=false,                
+	showstringspaces=false,
+	showtabs=false,                  
+	tabsize=2,
+	frame=single
+}
+\lstset{style=mystyle}
+
+%% ==================== Title Section ====================
+\title{
+	\vspace{-1cm}
+	\textbf{[Project Title: e.g., Autonomous Object Tracking Robot]} \\
+	\large  Project Report
+}
+
+\author{
+	Team Member 1 (ID: 20xxxxxx) \and
+	Team Member 2 (ID: 20xxxxxx) \and
+	Team Member 3 (ID: 20xxxxxx) \and
+	Team Member 4 (ID: 20xxxxxx) \and
+	Team Member 5 (ID: 20xxxxxx)
+}
+
+\date{\today}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+	
+	\maketitle
+	
+	%% ==================== 1. Project Overview ====================
+	\section{Project Overview}
+	
+	\subsection{Project Title and Task Description}
+	% Briefly describe what the project is about
+	This project aims to develop a ROS-based autonomous mobile robot capable of [describe the main task, e.g., tracking and following colored objects in real-time using RGB-D camera].
+	
+	\subsection{Project Objectives}
+	\begin{itemize}[noitemsep]
+		\item Objective 1: [e.g., Implement robust color-based object detection]
+		\item Objective 2: [e.g., Develop smooth trajectory planning algorithm]
+		\item Objective 3: [e.g., Achieve real-time visual servoing control]
+	\end{itemize}
+	
+	
+	%% ==================== 2. System Design ====================
+	\section{System Design}
+	
+	\subsection{System Architecture}
+	% Include a system architecture diagram
+	\begin{figure}[H]
+		\centering
+		% \includegraphics[width=0.85\textwidth]{figures/system_architecture.png}
+		\fbox{\parbox{0.8\textwidth}{\centering\vspace{2cm}[System Architecture Diagram Placeholder]\vspace{2cm}}}
+		\caption{System architecture showing ROS nodes and their communication relationships.}
+		\label{fig:architecture}
+	\end{figure}
+	
+	\subsection{Module Division}
+	The system consists of the following modules:
+	\begin{itemize}[noitemsep]
+		\item \textbf{Perception Module}: Processes camera data for object detection and localization.
+		\item \textbf{Planning Module}: Generates optimal paths based on detected object positions.
+		\item \textbf{Control Module}: Executes velocity commands for smooth robot motion.
+		\item \textbf{Integration Module}: Coordinates all subsystems and handles exceptions.
+	\end{itemize}
+	
+	% \subsection{Data Flow}
+	% Include a data flow diagram
+	%\begin{figure}[H]
+	%	\centering
+		% \includegraphics[width=0.75\textwidth]{figures/data_flow.png}
+	%	\fbox{\parbox{0.75\textwidth}{\centering\vspace{1.5cm}[Data Flow Diagram Placeholder]\vspace{1.5cm}}}
+		%\caption{Data flow from sensors through processing nodes to actuators.}
+	%	\label{fig:dataflow}
+	%\end{figure}
+	
+	
+	%% ==================== 3. Algorithm Principles ====================
+	\section{Algorithm Principles}
+	
+	\subsection{Core Algorithm Description}
+	% Describe the mathematical principles of your algorithm
+	The object detection algorithm utilizes HSV color space segmentation. Given an RGB image \( I \), we first convert it to HSV space:
+	\[
+	(H, S, V) = f_{RGB \to HSV}(R, G, B)
+	\]
+	The target region is extracted by thresholding:
+	\[
+	M(x,y) = 
+	\begin{cases}
+		1, & \text{if } H_{min} \leq H \leq H_{max} \land S_{min} \leq S \leq S_{max} \\
+		0, & \text{otherwise}
+	\end{cases}
+	\]
+	
+	\subsection{Algorithm Selection Rationale}
+	\begin{table}[H]
+		\centering
+		\caption{Comparison of Detection Algorithms}
+		\begin{tabular}{lccc}
+			\toprule
+			\textbf{Method} & \textbf{Speed} & \textbf{Accuracy} & \textbf{Complexity} \\
+			\midrule
+			HSV Thresholding & Fast & Medium & Low \\
+			Template Matching & Slow & Low & Medium \\
+			\bottomrule
+		\end{tabular}
+	\end{table}
+	
+	We selected HSV thresholding because [explain your reasoning].
+	
+	\subsection{Key Parameters}
+	\begin{itemize}[noitemsep]
+		\item HSV Range: \( H \in [h_1, h_2] \), \( S \in [s_1, s_2] \), \( V \in [v_1, v_2] \)
+		\item Control Gain: \( K_p = 0.5 \), \( K_d = 0.1 \)
+		\item Maximum Velocity: \( v_{max} = 0.3 \, \text{m/s} \)
+	\end{itemize}
+	
+	
+	%% ==================== 4. Implementation Details ====================
+	\section{Implementation Details}
+
+	\subsection{Technical Challenges and Solutions}
+	\begin{enumerate}[noitemsep]
+		\item \textbf{Challenge}: Noisy depth data causing unstable distance estimation. \\
+		\textbf{Solution}: Applied median filter and temporal smoothing.
+		\item \textbf{Challenge}: Robot oscillation during tracking. \\
+		\textbf{Solution}: Implemented velocity ramping and dead zone.
+	\end{enumerate}
+	
+	\subsection{Debugging Notes}
+	% Document issues encountered during debugging
+	\begin{itemize}[noitemsep]
+		\item Issue: TF frame mismatch between camera and base\_link. Fixed by adding static transform publisher.
+		\item Issue: Message queue overflow. Resolved by setting queue\_size=1 for real-time topics.
+	\end{itemize}
+	
+	
+	%% ==================== 5. Experimental Results ====================
+	\section{Experimental Results}
+	
+	\subsection{Quantitative Results}
+	
+	Path planning evaluation encompasses three main categories of metrics.
+	
+	\textbf{Path Quality Metrics} assess the generated path's characteristics including length (total distance using Euclidean or Manhattan measurements), smoothness (evaluating turns and curvature), safety (obstacle clearance and collision risk), and time efficiency.
+	
+	\textbf{Algorithm Performance Metrics} measure computational efficiency (runtime, memory, node expansions), solution quality (success rate, optimality ratio), and robustness across varying conditions.
+	
+	\textbf{Dynamic Environment Metrics} evaluate the algorithm's adaptability through replanning frequency and real-time performance capabilities.
+	
+	\subsubsection{Path Quality Metrics}
+	\begin{itemize}
+		\item \textbf{Path Length:} The total distance traveled from start to goal, measured either as straight-line (Euclidean) or grid-based (Manhattan) distance.
+		\item \textbf{Smoothness:} The continuity and fluidity of the path, quantified by the number of direction changes, curvature variations, and turning angles.
+		\item \textbf{Safety:} The degree of collision avoidance, measured by minimum clearance from obstacles, probability of collision, and safety buffer zones.
+		\item \textbf{Time Efficiency:} The temporal performance of path execution, including total travel duration and expected arrival time.
+	\end{itemize}
+	
+	\subsubsection{Algorithm Performance Metrics}
+	\begin{itemize}
+		\item \textbf{Computational Efficiency:} Resource consumption during path computation, including processing time, memory footprint, and number of search nodes explored.
+		\item \textbf{Success Rate:} The percentage of scenarios where the algorithm successfully finds a valid path to the goal.
+		\item \textbf{Suboptimality Ratio:} The ratio comparing the found path's cost to the theoretical optimal path cost (value of 1.0 = optimal).
+		\item \textbf{Robustness:} The algorithm's stability and consistent performance across diverse environments and varying parameter settings.
+	\end{itemize}
+	
+	\subsubsection{Dynamic Environment Metrics}
+	\begin{itemize}
+		\item \textbf{Replanning Frequency:} How often the algorithm must recalculate the path due to environmental changes or new obstacles.
+		\item \textbf{Adaptability:} The algorithm's ability to adjust to dynamic obstacles, moving targets, or changing constraints.
+		\item \textbf{Real-time Performance:} The capability to compute and update paths within strict time constraints for time-critical applications.
+	\end{itemize}
+	
+	\subsection{Quantitative Results}
+	\begin{table}[H]
+		\centering
+		\caption{Performance Metrics}
+		\begin{tabular}{lc}
+			\toprule
+			\textbf{Metric} & \textbf{Value} \\
+			\midrule
+			Detection Success Rate & 95.3\% \\
+			Average Response Time & 42 ms \\
+			Tracking Accuracy (RMSE) & 3.2 cm \\
+			Average Task Completion Time & 28.5 s \\
+			\bottomrule
+		\end{tabular}
+	\end{table}
+	
+	\subsection{Qualitative Results}
+	\begin{figure}[H]
+		\centering
+		\begin{subfigure}[b]{0.45\textwidth}
+			% \includegraphics[width=\textwidth]{figures/detection_result.png}
+			\fbox{\parbox{\textwidth}{\centering\vspace{1.5cm}[Detection Screenshot]\vspace{1.5cm}}}
+			\caption{Object detection visualization}
+		\end{subfigure}
+		\hfill
+		\begin{subfigure}[b]{0.45\textwidth}
+			% \includegraphics[width=\textwidth]{figures/trajectory.png}
+			\fbox{\parbox{\textwidth}{\centering\vspace{1.5cm}[Trajectory Plot]\vspace{1.5cm}}}
+			\caption{Robot trajectory during tracking}
+		\end{subfigure}
+		\caption{Experimental visualization results.}
+		\label{fig:results}
+	\end{figure}
+	
+	\subsection{Result Analysis}
+	The system achieved [good/satisfactory] performance because [analysis]. However, performance degraded under [conditions] due to [reasons]. Potential improvements include:
+	\begin{itemize}[noitemsep]
+		\item Implementing adaptive thresholding for varying lighting conditions
+		\item Adding Kalman filter for smoother trajectory estimation
+	\end{itemize}
+	
+	
+	%% ==================== 6. Team Contribution ====================
+	\section{Team Contribution}
+	
+	\begin{table}[H]
+		\centering
+		\caption{Team Member Contributions}
+		\begin{tabular}{|l|l|l|p{4.5cm}|c|}
+			\hline
+			\textbf{Name} & \textbf{Student ID} & \textbf{Module} & \textbf{Specific Work} & \textbf{Contribution} \\
+			\hline
+			Member 1 & 20xxxxxx & Perception & HSV tuning, depth fusion & 30\% \\
+			\hline
+			Member 2 & 20xxxxxx & Planning & A* algorithm implementation & 25\% \\
+			\hline
+			Member 3 & 20xxxxxx & Control & Visual servoing, velocity smoothing & 25\% \\
+			\hline
+			Member 4 & 20xxxxxx & Integration & System debugging, video recording & 20\% \\
+			\hline
+			Member 5 & 20xxxxxx & ... & ... & ...\% \\
+			\hline
+			\multicolumn{4}{|r|}{\textbf{Total}} & \textbf{100\%} \\
+			\hline
+		\end{tabular}
+	\end{table}
+	
+	\vspace{0.5cm}
+	\noindent\textbf{Member Signatures:}
+	
+	\vspace{0.8cm}
+	\noindent
+	\begin{tabular}{p{3cm}p{3cm}p{3cm}p{3cm}p{3cm}}
+		\hrulefill & \hrulefill & \hrulefill & \hrulefill & \hrulefill \\
+		Member 1 & Member 2 & Member 3 & Member 4  & Member 5 \\
+	\end{tabular}
+	
+	
+	%% ==================== 7. Summary and Reflection ====================
+	\section{Summary and Reflection}
+	
+	\subsection{Project Achievements}
+	\begin{itemize}[noitemsep]
+		\item Successfully implemented a complete ROS-based robotic system
+		\item Gained hands-on experience with computer vision and robot control
+		\item Developed teamwork and project management skills
+		\item Deepened understanding of sensor fusion and real-time systems
+	\end{itemize}
+	
+	
+	%% ==================== Appendix (Optional) ====================
+	\appendix
+	\section{Appendix}
+	
+	\subsection{Code Repository}
+	Complete source code is available at: \url{https://github.com/username/project-repo}
+	
+	\subsection{Additional Experimental Data}
+	% Add any extra data tables or figures here
+	
+	\subsection{References}
+	\begin{enumerate}[noitemsep]
+		\item ROS Wiki: \url{http://wiki.ros.org/}
+		\item OpenCV Documentation: \url{https://docs.opencv.org/}
+		\item Additional references as needed
+	\end{enumerate}
+	
+\end{document}
