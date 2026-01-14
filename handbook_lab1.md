@@ -18,10 +18,10 @@ The terminal is a text interface where users can input commands, and the operati
 
 In the Ubuntu operating system, the terminal is a very important tool. Users can execute various commands in the terminal, such as installing software, configuring the system, running programs, etc.
 
-Press the ctrl key, alt key, and t key simultaneously to summon a terminal interface:
+Press the **ctrl key, alt key, and t key simultaneously** to summon a terminal interface:
 ![1766555047243](image/1.linux/1766555047243.png)
 
-In this image, s is the username, the part after the @ separator is the hostname ubuntu, : is a separator symbol, and ~ represents the current user's home directory, which is also the current path where the terminal is located.
+In this image, s is the username, the part after the @ separator is the hostname ubuntu, : is a separator symbol, and ~ represents the current user's home directory, which is also the **current path** where the terminal is located.
 
 You can input some commands in this black box to perform corresponding operations. For example, input the ls command to list the files and folders in the current directory.
 
@@ -327,6 +327,10 @@ chmod +x run_linux_exp.sh
 ./run_linux_exp.sh
 ```
 
+**（The execution result may fail to obtain the weather information due to network issues.）**
+
+![image-20260114122550638](handbook_lab1.assets/image-20260114122550638.png)
+
 ![1766556218219](image/1.linux/1766556218219.png)
 
 We can see that scripts are particularly powerful tools that can accomplish many tasks through Linux commands.
@@ -427,7 +431,7 @@ First, perform compilation.
 
 In Terminal 1: Compile the ROS workspace.
 
-We use the `catkin_make` command to compile ROS packages. Its functions are:
+We use the `catkin_make` command to **compile ROS packages**. Its functions are:
 
 * Compile source code: Compile C++ source files into executables, mark Python scripts as executable.
 * Handle dependencies: Automatically resolve and link dependencies between packages.
@@ -450,7 +454,7 @@ After execution it will:
 
 Terminal 1: Start the ROS Master node.
 
-The `roscore` command can start the Master node:
+The `roscore` command can **start the Master node**:
 
 * Function: Manages registration and discovery of all nodes.
 * Role: Allows Publishers and Subscribers to find each other.
@@ -518,13 +522,13 @@ Observing the terminal, we can discover that it is constantly sending commands:
 Return to view Terminal 2 (Motor node).
 ![1766559088885](image/2.ros_experiment/1766559088885.png)
 
-**Observed**:The Controller sends speed commands, and the Motor receives them and updates the position.
+**Observed**:The Controller sends **speed commands**, and the Motor **receives** them and updates the position.
 
 ---
 
 However, wouldn't it be too complicated to enter a command line every time a program is started?
 
-ROS provides a unified startup configuration mechanism that can start multiple nodes with one click; this is the `roslaunch` command.
+ROS provides a unified startup configuration mechanism that can **start multiple nodes with one click**; this is the `roslaunch` command.
 
 `roslaunch`:
 
@@ -656,13 +660,13 @@ export TURTLEBOT3_MODEL=waffle
 roslaunch turtlebot3_gazebo turtlebot3_empty_world.launch
 ```
 
-![1766588066542](image/2.ros_experiment/1766588066542.png)
+![image-20260114191417099](handbook_lab1.assets/image-20260114191417099.png)
 
 ### 3.2 Build Custom Scene
 
 1. **Insert Models** : Drag objects from the left panel into the scene.
 
-   ![image-20260107212721055](handbook_lab1.assets/image-20260107212721055.png)
+   ![image-20260114194630615](handbook_lab1.assets/image-20260114194630615.png)
 
 2. **Adjust Parameters** :
 
@@ -672,19 +676,47 @@ roslaunch turtlebot3_gazebo turtlebot3_empty_world.launch
 
   ![image-20260107212332406](handbook_lab1.assets/image-20260107212332406.png)
 
-1. **Save World** : `File -> Save World As -> my_world.world`
+3. **Save World** : `File -> Save World As -> my_world.world`
 
 ![1766589618862](image/2.ros_experiment/1766589618862.png)
 
 ![1766589642312](image/2.ros_experiment/1766589642312.png)
 
-### 3.3 Load Custom World
+4. Load Custom World
 
-```bash
-gazebo my_world.world
-```
+   ```
+   gazebo my_world.world
+   ```
 
-Method 2: ROS launch file
+   
+
+
+
+### 3.3 Load  World and Robot
+
+1. Load Custom World and Robot
+
+   - Open **turtlebot3_empty_world.launch**  launch file
+
+     ```
+     gedit ~/catkin_ws/src/turtlebot3_simulations/turtlebot3_gazebo/launch/turtlebot3_empty_world.launch
+     ```
+
+   - modify the "world_name" parameter in the file to use the "world" path that you have created.
+
+   ![image-20260114193459633](handbook_lab1.assets/image-20260114193459633.png)
+
+   -  launch **turtlebot3_empty_world.launch** 
+
+     ```
+     source ~/catkin_ws/devel/setup.bash
+     export TURTLEBOT3_MODEL=waffle
+     roslaunch turtlebot3_gazebo turtlebot3_empty_world.launch
+     ```
+
+     ![image-20260114194501711](handbook_lab1.assets/image-20260114194501711.png)
+
+2. Load Official  World and Robot
 
 ```bash
 source ~/catkin_ws/devel/setup.bash
@@ -768,7 +800,7 @@ source ~/catkin_ws/devel/setup.bash
 roslaunch turtlebot_rviz_launchers view_robot.launch 
 ```
 
-![](image/2025-12-26-180703.png)
+![image-20260114195245744](handbook_lab1.assets/image-20260114195245744.png)
 
 ### 4.2 Detailed Steps to Add Display Items (Display)
 
