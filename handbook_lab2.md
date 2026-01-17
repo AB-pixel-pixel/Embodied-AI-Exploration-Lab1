@@ -227,41 +227,6 @@ rostopic echo /cmd_vel
 
 
 
-
-
----
-
-### Part 4: 3D Point Cloud Visualization
-
-While RViz is great for ROS integration, Open3D provides powerful Python APIs for programmatic point cloud processing and visualization.
-
-**4.1 Run the Visualizer**
-While the simulation (from Part 3) is running:
-
-
-```bash
-# Open a new terminal
-source ~/catkin_ws/devel/setup.bash
-
-# Run the Open3D visualizer
-rosrun lab2_perception pointcloud_visualizer.py
-```
-
-- A new window "3D Point Cloud" will appear.
-- **Left Click + Drag**: Rotate the view.
-- **Scroll Wheel**: Zoom in/out.
-- You should see the 3D reconstruction of the scene in front of the robot.
-
-![1767269368111](image/reading_sensor/1767269368111.png)
-
-![1767269386021](image/reading_sensor/1767269386021.png)
-
-
-
-
-
-
-
 ---
 
 ### Part 5: Recording and Playback with rosbag
@@ -344,6 +309,16 @@ Next, replay a rosbag recorded in a real environment.
 # Play real-world rosbag
 rosbag play kitti.bag
 ```
+
+The `kitti.bag` file can be downloaded using **one of the following methods**  
+(It has already been downloaded to the public classroom computers at `~/data/kitti.bag`):
+
+1. **OneDrive**  
+   https://cuhko365-my.sharepoint.com/:u:/g/personal/225080006_link_cuhk_edu_cn/IQCevV_xF2WMQZk08VXyADd5ATyv4ioLNLgMc3Vw3wgvFBk?e=ydcRxf
+
+2. **Baidu Netdisk**  
+   Link: https://pan.baidu.com/s/1u41ODlrhqEzJCPwf5vBEew?pwd=vqa8  
+   Extraction code: `vqa8`
 
 **5.6 Visualize Camera and LiDAR Data**
 

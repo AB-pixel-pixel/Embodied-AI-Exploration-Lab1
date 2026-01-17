@@ -676,7 +676,7 @@ roslaunch turtlebot3_gazebo turtlebot3_empty_world.launch
 
   ![image-20260107212332406](handbook_lab1.assets/image-20260107212332406.png)
 
-3. **Save World** : `File -> Save World As -> my_world.world`
+3. **Save World** : `File -> Save World As -> my_world.world`  (**Warning:** If you are using a computer in a public classroom, do not save the world, as this may cause the system to freeze)
 
 ![1766589618862](image/2.ros_experiment/1766589618862.png)
 
@@ -736,9 +736,8 @@ roslaunch turtlebot3_teleop turtlebot3_teleop_key.launch
 
  **Operating Instructions** :
 
-* `W/A/S/D` or `Arrow Keys`: Control movement
-* `X`: Stop
-* `Q/Z`: Increase/decrease speed
+* `W/A/X/D`: Control movement
+* `S`: Stop
 
 ![1766590095927](image/2.ros_experiment/1766590095927.png)
 
