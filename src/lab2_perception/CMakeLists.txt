@@ -168,6 +168,7 @@ catkin_install_python(PROGRAMS
   scripts/rgb_subscriber.py
   scripts/depth_subscriber.py
   scripts/perception_node.py
+  scripts/perception_yolo.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

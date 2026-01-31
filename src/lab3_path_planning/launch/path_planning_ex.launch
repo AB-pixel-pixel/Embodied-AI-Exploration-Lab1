@@ -1,0 +1,40 @@
+<launch>
+  <!-- 原有参数 -->
+  <arg name="model" default="waffle"/>
+  <arg name="map_file" default="$(find turtlebot3_maze)/maps/simple.yaml"/>
+  <arg name="open_rviz" default="true"/>
+  <arg name="move_forward_only" default="false"/>
+  
+  <!-- ★ 新增：使用自定义规划器 -->
+  <arg name="use_custom_planner" default="true"/>
+  
+  <!-- Turtlebot3 -->
+  <include file="$(find turtlebot3_bringup)/launch/turtlebot3_remote.launch">
+    <arg name="model" value="$(arg model)" />
+  </include>
+
+  <!-- Map server -->
+  <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)"/>
+
+  <!-- AMCL -->
+  <include file="$(find turtlebot3_navigation)/launch/amcl.launch"/>
+
+  <!-- ★ move_base 使用自定义配置 -->
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+    <!-- 加载自定义规划器参数 -->
+    <param name="base_global_planner" value="lab3_path_planning/SimplePathPlanner"/>
+    <!-- 或者使用简单配置 -->
+    <rosparam file="$(find lab3_path_planning)/param/move_base_params.yaml" command="load"/>
+    <rosparam file="$(find lab3_path_planning)/param/costmap_common_params.yaml" command="load" ns="global_costmap"/>
+    <rosparam file="$(find lab3_path_planning)/param/costmap_common_params.yaml" command="load" ns="local_costmap"/>
+  </node>
+
+  <!-- 启动学生的独立规划器节点 -->
+  <node pkg="lab3_path_planning" type="path_planning_node.py" name="my_path_planner" output="screen"/>
+
+  <!-- rviz -->
+  <group if="$(arg open_rviz)"> 
+    <node pkg="rviz" type="rviz" name="rviz" required="true"
+          args="-d $(find turtlebot3_navigation)/rviz/turtlebot3_navigation.rviz"/>
+  </group>
+</launch>
