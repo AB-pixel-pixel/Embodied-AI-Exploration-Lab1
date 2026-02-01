@@ -46,7 +46,7 @@ chmod +x setup_course.sh
 source devel/setup.bash
 ```
 
-现在你可以运行相关节点或仿真环境了。
+现在你可以运行相关节点或仿真环境了。test
 
 ### 💡 小贴士
 
