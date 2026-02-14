@@ -4,29 +4,55 @@
   <arg name="map_file" default="$(find turtlebot3_maze)/maps/simple.yaml"/>
   <arg name="open_rviz" default="true"/>
   <arg name="move_forward_only" default="false"/>
+  <arg name="open_gazebo" default="true"/>
+  
+  <arg name="x_pos" default="-4.0"/>
+  <arg name="y_pos" default="-4.0"/>
+  <arg name="z_pos" default="0.0"/>
   
   <!-- ★ 新增：使用自定义规划器 -->
   <arg name="use_custom_planner" default="true"/>
   
-  <!-- Turtlebot3 -->
-  <include file="$(find turtlebot3_bringup)/launch/turtlebot3_remote.launch">
-    <arg name="model" value="$(arg model)" />
-  </include>
+  <!-- Turtlebot3 Simulation / Remote -->
+  <group if="$(arg open_gazebo)">
+    <include file="$(find turtlebot3_maze)/launch/maze.launch">
+      <arg name="model" value="$(arg model)"/>
+      <arg name="x_pos" value="$(arg x_pos)"/>
+      <arg name="y_pos" value="$(arg y_pos)"/>
+      <arg name="z_pos" value="$(arg z_pos)"/>
+    </include>
+  </group>
+
+  <group unless="$(arg open_gazebo)">
+    <include file="$(find turtlebot3_bringup)/launch/turtlebot3_remote.launch">
+      <arg name="model" value="$(arg model)" />
+    </include>
+  </group>
 
   <!-- Map server -->
   <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)"/>
 
   <!-- AMCL -->
-  <include file="$(find turtlebot3_navigation)/launch/amcl.launch"/>
+  <include file="$(find turtlebot3_navigation)/launch/amcl.launch">
+    <arg name="initial_pose_x" value="$(arg x_pos)"/>
+    <arg name="initial_pose_y" value="$(arg y_pos)"/>
+  </include>
 
   <!-- ★ move_base 使用自定义配置 -->
   <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+    <!-- Remap goal so move_base doesn't automatically start when we set a goal in RViz -->
+    <remap from="/move_base_simple/goal" to="/move_base_simple/goal_ignored"/>
+    
     <!-- 加载自定义规划器参数 -->
-    <param name="base_global_planner" value="lab3_path_planning/SimplePathPlanner"/>
+    <!-- <param name="base_global_planner" value="lab3_path_planning/SimplePathPlanner"/> -->
+    <param name="base_global_planner" value="navfn/NavfnROS"/>
+    
     <!-- 或者使用简单配置 -->
     <rosparam file="$(find lab3_path_planning)/param/move_base_params.yaml" command="load"/>
     <rosparam file="$(find lab3_path_planning)/param/costmap_common_params.yaml" command="load" ns="global_costmap"/>
     <rosparam file="$(find lab3_path_planning)/param/costmap_common_params.yaml" command="load" ns="local_costmap"/>
+    <rosparam file="$(find lab3_path_planning)/param/local_costmap_params.yaml" command="load"/>
+    <rosparam file="$(find lab3_path_planning)/param/global_costmap_params.yaml" command="load"/>
   </node>
 
   <!-- 启动学生的独立规划器节点 -->
