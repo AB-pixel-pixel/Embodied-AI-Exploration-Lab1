@@ -186,12 +186,12 @@ class SimplePathPlanner:
 
     def plan_path(self, start_pose, goal_pose):
         """
-        纯直线规划：直接连接起点和终点，不考虑障碍物
+        Bug2 算法实现
         """
         start_grid = self.world_to_grid(start_pose.position.x, start_pose.position.y)
         goal_grid = self.world_to_grid(goal_pose.position.x, goal_pose.position.y)
         
-        # 简单检查起点终点是否在地图范围内
+        # 简单检查起点终点
         width = self.map_data.info.width
         height = self.map_data.info.height
         if not (0 <= start_grid[0] < width and 0 <= start_grid[1] < height):
@@ -201,15 +201,74 @@ class SimplePathPlanner:
              rospy.logwarn("Goal is out of map bounds")
              return Path()
 
-        # 生成直线路径点 (Bresenham算法)
-        path_points = self.get_bresenham_line(start_grid, goal_grid)
+        # Bug2 算法状态
+        STATE_GO_TO_GOAL = 0
+        STATE_FOLLOW_WALL = 1
         
-        # 检查路径上是否有障碍物（可选，仅仅打印警告）
-        for gx, gy in path_points:
-            if not self.is_valid(gx, gy):
-                rospy.logwarn(f"Path crosses obstacle at grid ({gx}, {gy})")
-                # 这里我们选择继续生成路径，因为用户要求"纯直线"
-                # 如果需要避障，应该返回空路径或截断
+        state = STATE_GO_TO_GOAL
+        current = start_grid
+        path_points = [current]
+        
+        # 用于 Follow Wall 的辅助变量
+        hit_point = None
+        # M-line: 连接 Start 和 Goal 的直线 (用点集近似)
+        m_line_points = self.get_bresenham_line(start_grid, goal_grid)
+        m_line_set = set(m_line_points)
+        
+        visited_in_follow = set() # 防止死循环
+        
+        max_steps = width * height # 防止无限循环
+        steps = 0
+        
+        while current != goal_grid and steps < max_steps:
+            steps += 1
+            
+            if state == STATE_GO_TO_GOAL:
+                # 尝试向目标直行
+                next_node = self.get_next_straight_node(current, goal_grid)
+                
+                if self.is_valid(next_node[0], next_node[1]):
+                    current = next_node
+                    path_points.append(current)
+                else:
+                    # 遇到障碍物，切换到 Follow Wall
+                    state = STATE_FOLLOW_WALL
+                    hit_point = current
+                    visited_in_follow.clear()
+                    rospy.loginfo(f"Hit obstacle at {current}, switching to FOLLOW_WALL")
+                    
+            elif state == STATE_FOLLOW_WALL:
+                # 沿墙走 (Right Hand Rule: 障碍物在右侧)
+                # 我们需要找到下一个空闲节点，且该节点紧贴障碍物
+                next_node = self.get_next_wall_following_node(current, path_points[-2] if len(path_points) > 1 else current)
+                
+                if next_node is None:
+                    rospy.logwarn("Trapped! Cannot find next wall following node.")
+                    break
+                    
+                current = next_node
+                path_points.append(current)
+                
+                # 检查死循环
+                if current == hit_point and len(visited_in_follow) > 5: # 至少走几步再判断
+                    rospy.logwarn("Loop detected! Goal unreachable.")
+                    break
+                visited_in_follow.add(current)
+                
+                # 检查离开条件 (Bug2):
+                # 1. 回到了 M-line
+                # 2. 离目标比 hit_point 更近
+                # 3. 朝向目标的方向没有障碍物
+                if current in m_line_set:
+                    dist_current = self.heuristic(current, goal_grid)
+                    dist_hit = self.heuristic(hit_point, goal_grid)
+                    
+                    if dist_current < dist_hit:
+                        # 检查能否朝目标直行一步
+                        next_straight = self.get_next_straight_node(current, goal_grid)
+                        if self.is_valid(next_straight[0], next_straight[1]):
+                            state = STATE_GO_TO_GOAL
+                            rospy.loginfo(f"Left obstacle at {current}, switching to GO_TO_GOAL")
 
         # 重构路径消息
         path_msg = Path()
