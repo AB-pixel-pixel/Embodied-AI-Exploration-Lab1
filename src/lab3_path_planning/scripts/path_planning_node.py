@@ -180,9 +180,7 @@ class SimplePathPlanner:
             
         return True
 
-    def heuristic(self, a, b):
-        # Euclidean distance
-        return math.sqrt((a[0] - b[0])**2 + (a[1] - b[1])**2)
+
 
     def plan_path(self, start_pose, goal_pose):
         """
@@ -255,117 +253,6 @@ class SimplePathPlanner:
                 y1 += sy
         return points
 
-    def get_next_straight_node(self, current, goal):
-        """获取朝向目标最近的一个邻居"""
-        cx, cy = current
-        gx, gy = goal
-        
-        # 计算方向
-        dx = gx - cx
-        dy = gy - cy
-        
-        # 归一化方向，选择 8 邻域中最佳的一个
-        best_node = None
-        min_dist = float('inf')
-        
-        neighbors = [
-            (0, 1), (0, -1), (1, 0), (-1, 0),
-            (1, 1), (1, -1), (-1, 1), (-1, -1)
-        ]
-        
-        for nx, ny in neighbors:
-            next_pos = (cx + nx, cy + ny)
-            dist = self.heuristic(next_pos, goal)
-            if dist < min_dist:
-                min_dist = dist
-                best_node = next_pos
-                
-        return best_node
-
-    def get_next_wall_following_node(self, current, prev):
-        """
-        基于当前位置和上一步位置，决定下一步往哪走以沿墙移动。
-        使用右手定则：始终保持障碍物在右侧。
-        """
-        cx, cy = current
-        px, py = prev
-        
-        # 定义 8 个方向 (顺时针顺序: N, NE, E, SE, S, SW, W, NW)
-        # 对应 (dx, dy)
-        directions = [
-            (0, 1), (1, 1), (1, 0), (1, -1), 
-            (0, -1), (-1, -1), (-1, 0), (-1, 1)
-        ]
-        
-        # 找到从 prev 到 current 的方向索引
-        dx = cx - px
-        dy = cy - py
-        try:
-            current_dir_idx = directions.index((dx, dy))
-        except ValueError:
-            current_dir_idx = 0 # 默认，可能还没动
-            
-        # 右手定则：
-        # 我们希望障碍物在右边。
-        # 假设我们刚向前走了一步（方向 current_dir_idx）。
-        # 如果右边是空的，我们应该右转（说明是外拐角）。
-        # 如果右边是墙，前方是空的，我们直行。
-        # 如果前方也是墙，我们左转。
-        
-        # 搜索顺序：从 "右后" 开始，逆时针扫描到 "右"。
-        # 这里的逻辑稍微调整一下以适应栅格：
-        # 我们搜索的其实是“空闲节点”。
-        # 我们从 current_dir_idx - 2 (右侧) 开始逆时针扫描。
-        # 这样找到的第一个空闲节点就是最贴近右侧墙壁的路径。
-        
-        # 修正：为了贴右墙，我们需要优先往右转。
-        # 所以搜索顺序应该是：右前 -> 前 -> 左前 -> 左 -> 左后 -> 后 -> 右后 -> 右
-        # 这里的方向是相对于 current_dir 的偏移。
-        
-        # 让我们尝试更稳健的逻辑：
-        # 索引偏移：
-        # -2: 右 (90度)
-        # -1: 右前 (45度)
-        #  0: 前
-        # +1: 左前
-        # ...
-        # 我们从 右后 (-3 或 +5) 开始逆时针寻找第一个非障碍物。
-        # 这样可以保证我们紧贴着右边的障碍物。
-        
-        start_idx = (current_dir_idx - 2) % 8 # 从右边开始找
-        
-        # 但如果是外拐角，我们需要甚至往回转一点点？
-        # 比如：
-        #   . . .
-        #   . R .  <- current, R came from Left
-        #   . # .
-        #     ^ obstacle
-        # 如果我们从 Left 过来，方向是 East (idx=2).
-        # 右边 (South, idx=4) 是障碍物。
-        # 我们应该继续 East，或者如果 South 空了就去 South。
-        
-        # 正确的沿墙搜索顺序（右手定则，寻找空地）：
-        # 从“右后”方开始，逆时针扫描。
-        # 右后: idx - 3
-        # 右: idx - 2
-        # 右前: idx - 1
-        # 前: idx
-        # ...
-        
-        # 我们从 (current_dir_idx - 3) 开始扫描 8 个邻居
-        for i in range(8):
-            # 逆时针扫描
-            check_idx = (current_dir_idx - 2 + i) % 8 
-            # 顺序：右 -> 右前 -> 前 -> 左前 -> 左 ...
-            # 这样找到的第一个空位就是我们要去的，它保证了我们的右侧（上一个检查失败的位）是墙。
-            
-            dx, dy = directions[check_idx]
-            nx, ny = cx + dx, cy + dy
-            
-            if self.is_valid(nx, ny):
-                return (nx, ny)
-                
-        return None
 
 if __name__ == '__main__':
     try:

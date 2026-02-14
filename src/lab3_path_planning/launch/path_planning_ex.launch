@@ -55,7 +55,7 @@
     <rosparam file="$(find lab3_path_planning)/param/global_costmap_params.yaml" command="load"/>
   </node>
 
-  <!-- 启动学生的独立规划器节点 -->
+  <!-- 启动独立的规划器节点 -->
   <node pkg="lab3_path_planning" type="path_planning_node.py" name="my_path_planner" output="screen"/>
 
   <!-- rviz -->
