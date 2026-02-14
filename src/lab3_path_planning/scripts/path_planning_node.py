@@ -9,20 +9,25 @@ import math
 import tf.transformations
 
 class SimplePathPlanner:
-    def __init__(self):
-        rospy.init_node('eai_path_planner')
-        
-        # 订阅地图
-        self.map_sub = rospy.Subscriber('/map', OccupancyGrid, self.map_callback)
-        # 订阅目标点
-        self.goal_sub = rospy.Subscriber('/move_base_simple/goal', PoseStamped, self.goal_callback)
-        # 订阅当前位置
-        self.pose_sub = rospy.Subscriber('/amcl_pose', PoseWithCovarianceStamped, self.pose_callback)
-        
-        # 发布路径
-        self.path_pub = rospy.Publisher('/my_planned_path', Path, queue_size=1)
-        # 发布控制指令
-        self.cmd_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=1)
+    def __init__(self, test_mode=False):
+        self.test_mode = test_mode
+        if not self.test_mode:
+            rospy.init_node('eai_path_planner')
+            
+            # 订阅地图
+            self.map_sub = rospy.Subscriber('/map', OccupancyGrid, self.map_callback)
+            # 订阅目标点
+            self.goal_sub = rospy.Subscriber('/move_base_simple/goal', PoseStamped, self.goal_callback)
+            # 订阅当前位置
+            self.pose_sub = rospy.Subscriber('/amcl_pose', PoseWithCovarianceStamped, self.pose_callback)
+            
+            # 发布路径
+            self.path_pub = rospy.Publisher('/my_planned_path', Path, queue_size=1)
+            # 发布控制指令
+            self.cmd_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=1)
+            
+            # 定时器：控制循环 (10Hz)
+            self.timer = rospy.Timer(rospy.Duration(0.1), self.control_loop)
         
         self.map_data = None
         self.current_pose = None
@@ -31,9 +36,7 @@ class SimplePathPlanner:
         self.current_path = []
         self.is_tracking = False
         self.path_index = 0
-        
-        # 定时器：控制循环 (10Hz)
-        self.timer = rospy.Timer(rospy.Duration(0.1), self.control_loop)
+
         
     def map_callback(self, msg):
         self.map_data = msg
@@ -212,12 +215,14 @@ class SimplePathPlanner:
         # 重构路径消息
         path_msg = Path()
         path_msg.header.frame_id = "map"
-        path_msg.header.stamp = rospy.Time.now()
+        if not self.test_mode:
+            path_msg.header.stamp = rospy.Time.now()
         
         for grid_x, grid_y in path_points:
             pose = PoseStamped()
             pose.header.frame_id = "map"
-            pose.header.stamp = rospy.Time.now()
+            if not self.test_mode:
+                pose.header.stamp = rospy.Time.now()
             
             wx, wy = self.grid_to_world(grid_x, grid_y)
             pose.pose.position.x = wx
