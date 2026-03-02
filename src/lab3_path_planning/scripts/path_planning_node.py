@@ -15,7 +15,7 @@ class SimplePathPlanner:
             rospy.init_node('eai_path_planner')
             
             # 订阅地图
-            self.map_sub = rospy.Subscriber('/map', OccupancyGrid, self.map_callback)
+            self.map_sub = rospy.Subscriber('/map', OccupancyGrid, self.map_callback_consider_robot)
             # 订阅目标点
             self.goal_sub = rospy.Subscriber('/move_base_simple/goal', PoseStamped, self.goal_callback)
             # 订阅当前位置
@@ -36,8 +36,32 @@ class SimplePathPlanner:
         self.current_path = []
         self.is_tracking = False
         self.path_index = 0
-
+    
+    def map_callback_consider_robot(self, msg):
+        # 复制一份原始地图数据
+        inflated_data = list(msg.data)
+        width = msg.info.width
+        height = msg.info.height
         
+        # 膨胀半径（单位：栅格）
+        # 假设分辨率 0.1m，机器人半径 0.2m，则设为 2 [cite: 41]
+        inflation_radius = 5 
+        
+        for y in range(height):
+            for x in range(width):
+                # 如果当前格是障碍物
+                if msg.data[y * width + x] > 50:
+                    # 将周围 radius 范围内的格子全部涂黑
+                    for dy in range(-inflation_radius, inflation_radius + 1):
+                        for dx in range(-inflation_radius, inflation_radius + 1):
+                            nx, ny = x + dx, y + dy
+                            if 0 <= nx < width and 0 <= ny < height:
+                                inflated_data[ny * width + nx] = 100
+        
+        # 将膨胀后的数据存入 self.map_data
+        msg.data = tuple(inflated_data)
+        self.map_data = msg
+ 
     def map_callback(self, msg):
         self.map_data = msg
         
