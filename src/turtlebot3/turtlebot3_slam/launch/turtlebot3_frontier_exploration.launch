@@ -35,4 +35,9 @@
     <rosparam file="$(find turtlebot3_navigation)/param/costmap_common_params_$(arg model).yaml" command="load" ns="explore_costmap" />
     <rosparam file="$(find turtlebot3_slam)/config/frontier_exploration.yaml" command="load" ns="explore_costmap" />
   </node>
+
+
+  <node pkg="rviz" type="rviz" name="rviz" required="true"
+      args="-d $(find turtlebot3_navigation)/rviz/turtlebot3_navigation.rviz"/>
+
 </launch>
