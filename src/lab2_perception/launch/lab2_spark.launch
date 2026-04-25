@@ -1,0 +1,8 @@
+<launch>
+  <!-- Other nodes -->
+  <node pkg="lab2_perception" type="perception_node.py" name="perception_node" output="screen"/>
+
+  <node pkg="rviz" type="rviz" name="rviz" required="true"
+        args="-d $(find lab2_perception)/rviz/lab2.rviz"/>
+
+</launch>
